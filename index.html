@@ -1,99 +1,1010 @@
-// ⬇️ මෙතන ඔබේ Apps Script URL එක paste කරන්න
-const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbzzHm3AagVpIibTyCAQZjSdXj9xUQDqKAON72fFJNx8vyQzu79WA_PKSFI0gnblzLiP/exec";
+<!DOCTYPE html>
+<html lang="si">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>TS COMPUTER WORLD — Premium Gaming PCs</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Arial, sans-serif; -webkit-tap-highlight-color:transparent; }
+  html { scroll-behavior:smooth; }
+  body { background:#080808; color:#fff; overflow-x:hidden; }
+  a { text-decoration:none; color:inherit; }
+  img { max-width:100%; display:block; height:auto; }
 
-// WhatsApp number (order message එකට ඕන නැහැ දැන්, නමුත් තියෙන්න දෙන්න)
+  body::before {
+    content:''; position:fixed; top:0; left:0; width:100%; height:100%;
+    background:
+      radial-gradient(circle at 20% 10%, rgba(0,123,255,0.15) 0%, transparent 40%),
+      radial-gradient(circle at 80% 90%, rgba(0,123,255,0.1) 0%, transparent 40%);
+    pointer-events:none; z-index:0;
+  }
+  body > * { position:relative; z-index:1; }
+
+  .topbar {
+    display:flex; justify-content:center; gap:10px; padding:8px 0;
+    background:linear-gradient(90deg, #000 0%, #0a1929 50%, #000 100%);
+    border-bottom:1px solid rgba(0,123,255,0.3);
+  }
+  .dot { width:8px; height:8px; border-radius:50%; background:#007bff; box-shadow:0 0 10px #007bff; animation:dotPulse 2s infinite; }
+  .dot:nth-child(2) { animation-delay:0.3s; }
+  .dot:nth-child(3) { animation-delay:0.6s; }
+  @keyframes dotPulse { 0%,100% { opacity:0.4; transform:scale(1); } 50% { opacity:1; transform:scale(1.3); } }
+
+  .navbar {
+    display:flex; align-items:center; justify-content:space-between;
+    background:rgba(0,0,0,0.95); backdrop-filter:blur(20px);
+    padding:12px 25px; border-bottom:2px solid #007bff;
+    position:sticky; top:0; z-index:1000;
+    box-shadow:0 4px 30px rgba(0,123,255,0.2);
+  }
+  .logo { font-size:1.1rem; font-weight:800; color:#fff; letter-spacing:1px; white-space:nowrap; display:flex; align-items:center; gap:8px; transition:0.3s; }
+  .logo::before { content:''; width:8px; height:8px; border-radius:50%; background:#007bff; box-shadow:0 0 12px #007bff; }
+  .logo:hover { transform:scale(1.03); }
+  .logo span { background:linear-gradient(135deg, #007bff, #00d4ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+
+  .nav-right { display:flex; align-items:center; gap:18px; }
+  .nav-links { list-style:none; display:flex; align-items:center; gap:8px; }
+  .nav-links li { position:relative; }
+  .nav-links a { padding:9px 14px; font-weight:600; color:#bbb; transition:0.3s; display:block; border-radius:8px; font-size:0.85rem; letter-spacing:0.5px; }
+  .nav-links a:hover, .nav-links a.active { color:#fff; background:rgba(0,123,255,0.15); box-shadow:inset 0 0 0 1px #007bff, 0 0 15px rgba(0,123,255,0.4); }
+
+  .dropdown-menu {
+    display:none; position:absolute; top:100%; left:0;
+    background:rgba(10,10,10,0.98); backdrop-filter:blur(20px);
+    border:1px solid #007bff; min-width:200px;
+    list-style:none; padding:8px; border-radius:12px;
+    box-shadow:0 15px 40px rgba(0,123,255,0.4);
+    max-height:70vh; overflow-y:auto; z-index:1001;
+    animation:dropIn 0.2s ease;
+  }
+  @keyframes dropIn { from { opacity:0; transform:translateY(-10px); } to { opacity:1; transform:translateY(0); } }
+  .dropdown:hover .dropdown-menu { display:block; }
+  .dropdown-menu li a { padding:10px 14px; color:#bbb; font-weight:500; font-size:0.85rem; border-radius:6px; transition:0.2s; }
+  .dropdown-menu li a:hover { background:linear-gradient(90deg, #007bff, #0056b3); color:#fff; transform:translateX(4px); }
+
+  .cart-btn {
+    position:relative; background:linear-gradient(135deg, rgba(0,123,255,0.1), rgba(0,123,255,0.05));
+    border:2px solid #007bff; color:#007bff; padding:8px 16px; border-radius:25px;
+    font-weight:700; cursor:pointer; transition:0.3s;
+    display:flex; align-items:center; gap:8px; font-size:0.85rem; letter-spacing:0.5px; white-space:nowrap;
+  }
+  .cart-btn:hover { background:#007bff; color:#fff; box-shadow:0 0 25px #007bff; transform:translateY(-2px); }
+  .cart-btn svg { width:16px; height:16px; fill:currentColor; }
+  .cart-count {
+    background:linear-gradient(135deg, #ff3b3b, #c41e1e); color:#fff;
+    font-size:0.7rem; font-weight:800; border-radius:50%;
+    min-width:20px; height:20px; padding:0 5px;
+    display:flex; align-items:center; justify-content:center;
+    position:absolute; top:-8px; right:-8px;
+    box-shadow:0 0 12px rgba(255,59,59,1); border:2px solid #000;
+    animation:cartBounce 0.4s ease;
+  }
+  @keyframes cartBounce { 0%,100% { transform:scale(1); } 50% { transform:scale(1.3); } }
+
+  .menu-btn { display:none; background:rgba(0,123,255,0.1); border:2px solid #007bff; color:#007bff; font-size:1.3rem; padding:4px 12px; border-radius:8px; cursor:pointer; transition:0.3s; }
+  .menu-btn:hover { background:#007bff; color:#fff; }
+
+  .container { max-width:1250px; margin:0 auto; padding:40px 20px; }
+
+  .page-banner {
+    position:relative; background:url('cover.png') center/cover no-repeat;
+    background-color:#0a1929; min-height:300px;
+    display:flex; align-items:center; justify-content:center;
+    text-align:center; border-bottom:3px solid #007bff; overflow:hidden;
+  }
+  .page-banner::after {
+    content:''; position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.9) 100%), radial-gradient(circle at 50% 50%, rgba(0,123,255,0.2) 0%, transparent 70%);
+  }
+  .banner-content { position:relative; z-index:2; padding:50px 20px; }
+  .banner-content h1 { font-size:3rem; color:#fff; text-shadow:0 0 30px rgba(0,123,255,0.8), 0 0 60px rgba(0,123,255,0.4); letter-spacing:3px; margin-bottom:10px; font-weight:800; animation:fadeUp 0.8s ease; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+  .banner-content p { font-size:1.1rem; color:#007bff; letter-spacing:4px; text-transform:uppercase; font-weight:600; animation:fadeUp 0.8s ease 0.2s backwards; }
+  .page-banner.home-banner { min-height:500px; }
+  .page-banner.home-banner .banner-content h1 { font-size:3.5rem; }
+  .page-banner.home-banner .banner-content p { font-size:1.3rem; margin-bottom:30px; }
+  .page-banner.home-banner .banner-content::before { content:'⚡ PREMIUM GAMING GEAR ⚡'; display:block; font-size:0.8rem; color:#007bff; letter-spacing:5px; margin-bottom:15px; font-weight:700; opacity:0.8; }
+
+  .btn {
+    display:inline-block; background:linear-gradient(135deg, #007bff, #0056b3);
+    color:#fff; padding:14px 36px; border-radius:30px; font-weight:700;
+    letter-spacing:1.5px; transition:0.3s; border:2px solid #007bff;
+    cursor:pointer; font-size:0.95rem; text-transform:uppercase;
+    box-shadow:0 8px 25px rgba(0,123,255,0.4);
+    position:relative; overflow:hidden;
+  }
+  .btn::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background:linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); transition:0.5s; }
+  .btn:hover { transform:translateY(-3px); box-shadow:0 12px 35px rgba(0,123,255,0.7); }
+  .btn:hover::before { left:100%; }
+
+  .section { display:none; }
+  .section.active { display:block; animation:sectionFade 0.5s ease; }
+  @keyframes sectionFade { from { opacity:0; } to { opacity:1; } }
+  .section-title { font-size:2.2rem; text-align:center; margin:50px 0 40px; color:#fff; position:relative; display:inline-block; width:100%; font-weight:800; letter-spacing:1px; }
+  .section-title span { background:linear-gradient(135deg, #007bff, #00d4ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; filter:drop-shadow(0 0 15px rgba(0,123,255,0.6)); }
+  .section-title::after { content:''; display:block; width:80px; height:3px; background:linear-gradient(90deg, transparent, #007bff, transparent); margin:15px auto 0; }
+
+  .grid-3 { display:grid; grid-template-columns:repeat(3, 1fr); gap:22px; }
+  .grid-4 { display:grid; grid-template-columns:repeat(4, 1fr); gap:20px; }
+
+  .card {
+    border:1px solid rgba(0,123,255,0.4); border-radius:14px; overflow:hidden;
+    background:linear-gradient(145deg, #111 0%, #0a0a0a 100%);
+    transition:all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow:0 4px 20px rgba(0,0,0,0.5);
+    display:flex; flex-direction:column; position:relative;
+  }
+  .card::before { content:''; position:absolute; inset:0; background:linear-gradient(135deg, rgba(0,123,255,0.1), transparent 50%); opacity:0; transition:0.3s; pointer-events:none; z-index:1; }
+  .card:hover { transform:translateY(-8px); border-color:#007bff; box-shadow:0 15px 40px rgba(0,123,255,0.5), 0 0 0 1px #007bff; }
+  .card:hover::before { opacity:1; }
+  .card img { width:100%; height:190px; object-fit:cover; transition:0.5s; position:relative; z-index:0; }
+  .card:hover img { transform:scale(1.08); }
+
+  .card-body { padding:14px; display:flex; flex-direction:column; flex:1; position:relative; z-index:2; }
+  .card-title { font-size:0.95rem; font-weight:600; color:#fff; margin-bottom:8px; min-height:42px; line-height:1.3; }
+  .card-price { font-size:1.25rem; font-weight:800; background:linear-gradient(135deg, #007bff, #00d4ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; filter:drop-shadow(0 0 8px rgba(0,123,255,0.5)); margin-bottom:14px; }
+  .card-actions { display:flex; gap:8px; margin-top:auto; }
+  .add-btn { flex:1; background:linear-gradient(135deg, #007bff, #0056b3); color:#fff; border:none; padding:10px; border-radius:10px; font-weight:700; cursor:pointer; transition:0.3s; font-size:0.82rem; display:flex; align-items:center; justify-content:center; gap:5px; letter-spacing:0.5px; }
+  .add-btn:hover { box-shadow:0 6px 20px rgba(0,123,255,0.7); transform:translateY(-2px); }
+  .add-btn svg { width:14px; height:14px; fill:currentColor; }
+  .order-btn { flex:1; background:transparent; color:#25D366; border:2px solid #25D366; padding:8px 10px; border-radius:10px; font-weight:700; cursor:pointer; transition:0.3s; font-size:0.82rem; display:flex; align-items:center; justify-content:center; gap:5px; letter-spacing:0.5px; }
+  .order-btn:hover { background:#25D366; color:#fff; box-shadow:0 6px 20px rgba(37,211,102,0.6); transform:translateY(-2px); }
+  .order-btn svg { width:14px; height:14px; fill:currentColor; }
+
+  .about-content {
+    max-width:850px; margin:0 auto; text-align:center; line-height:1.9;
+    font-size:1.05rem; color:#bbb;
+    background:linear-gradient(145deg, #0d0d0d, #0a0a0a);
+    border:1px solid rgba(0,123,255,0.3);
+    border-radius:20px; padding:45px 35px;
+    box-shadow:0 10px 40px rgba(0,0,0,0.5);
+  }
+  .about-content h2 { background:linear-gradient(135deg, #007bff, #00d4ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:25px; font-size:1.8rem; letter-spacing:2px; }
+  .about-content p { margin-bottom:15px; }
+
+  .footer { text-align:center; padding:30px 20px; background:#000; color:#666; border-top:1px solid rgba(0,123,255,0.2); margin-top:60px; font-size:0.9rem; }
+
+  .toast {
+    position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(100px);
+    background:linear-gradient(135deg, #007bff, #0056b3); color:#fff;
+    padding:15px 28px; border-radius:30px; font-weight:700;
+    box-shadow:0 10px 40px rgba(0,123,255,0.8); z-index:99999;
+    opacity:0; transition:0.4s; pointer-events:none; max-width:90%;
+    text-align:center; border:1px solid rgba(255,255,255,0.2);
+  }
+  .toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+
+  .cart-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(5px); z-index:9998; opacity:0; visibility:hidden; transition:0.3s; }
+  .cart-overlay.open { opacity:1; visibility:visible; }
+
+  .cart-modal {
+    position:fixed; top:0; right:-450px; width:420px; max-width:100%;
+    height:100vh; background:linear-gradient(180deg, #0d0d0d, #0a0a0a);
+    border-left:3px solid #007bff;
+    box-shadow:-15px 0 50px rgba(0,123,255,0.5);
+    z-index:9999; transition:right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display:flex; flex-direction:column;
+  }
+  .cart-modal.open { right:0; }
+
+  .cart-header { padding:22px; border-bottom:2px solid #007bff; display:flex; align-items:center; justify-content:space-between; background:linear-gradient(90deg, #000, #0a1929); }
+  .cart-header h2 { color:#fff; font-size:1.35rem; letter-spacing:1px; }
+  .cart-header h2 span { background:linear-gradient(135deg, #007bff, #00d4ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+  .close-cart { background:transparent; border:2px solid #007bff; color:#007bff; width:38px; height:38px; border-radius:50%; cursor:pointer; font-size:1.1rem; font-weight:700; transition:0.3s; display:flex; align-items:center; justify-content:center; }
+  .close-cart:hover { background:#007bff; color:#fff; transform:rotate(90deg); box-shadow:0 0 15px #007bff; }
+
+  .cart-items { flex:1; overflow-y:auto; padding:18px; }
+  .cart-items::-webkit-scrollbar { width:8px; }
+  .cart-items::-webkit-scrollbar-track { background:#0a0a0a; }
+  .cart-items::-webkit-scrollbar-thumb { background:#007bff; border-radius:4px; }
+
+  .cart-item { display:flex; gap:12px; padding:14px; background:linear-gradient(145deg, #111, #0a0a0a); border:1px solid rgba(0,123,255,0.4); border-radius:12px; margin-bottom:12px; align-items:center; transition:0.3s; }
+  .cart-item:hover { border-color:#007bff; }
+  .cart-item img { width:72px; height:72px; object-fit:cover; border-radius:8px; border:1px solid #007bff; }
+  .cart-item-info { flex:1; min-width:0; }
+  .cart-item-name { font-size:0.88rem; font-weight:600; color:#fff; margin-bottom:6px; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+  .cart-item-price { font-size:0.95rem; color:#007bff; font-weight:800; }
+  .cart-item-qty { display:flex; align-items:center; gap:8px; margin-top:8px; }
+  .qty-btn { background:transparent; border:1.5px solid #007bff; color:#007bff; width:26px; height:26px; border-radius:6px; cursor:pointer; font-weight:800; font-size:0.9rem; transition:0.2s; display:flex; align-items:center; justify-content:center; }
+  .qty-btn:hover { background:#007bff; color:#fff; }
+  .qty-value { font-weight:800; min-width:24px; text-align:center; color:#fff; font-size:0.95rem; }
+  .remove-btn { background:transparent; border:none; color:#ff3b3b; font-size:1.2rem; cursor:pointer; padding:5px; transition:0.3s; align-self:flex-start; border-radius:50%; }
+  .remove-btn:hover { color:#fff; background:#ff3b3b; transform:scale(1.1); }
+
+  .cart-empty { text-align:center; color:#666; padding:50px 20px; }
+  .cart-empty svg { width:70px; height:70px; fill:#222; margin-bottom:15px; }
+
+  .cart-footer { padding:22px; border-top:2px solid #007bff; background:linear-gradient(0deg, #000, #0a1929); }
+  .cart-total { display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; font-size:1.15rem; font-weight:800; }
+  .cart-total-label { color:#888; letter-spacing:1px; }
+  .cart-total-amount { background:linear-gradient(135deg, #007bff, #00d4ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; font-size:1.4rem; }
+  .checkout-btn { width:100%; background:linear-gradient(135deg, #25D366, #1da851); color:#fff; border:none; padding:15px; border-radius:15px; font-weight:800; font-size:1rem; cursor:pointer; transition:0.3s; letter-spacing:0.8px; display:flex; align-items:center; justify-content:center; gap:10px; box-shadow:0 8px 25px rgba(37,211,102,0.4); }
+  .checkout-btn:hover:not(:disabled) { box-shadow:0 12px 35px rgba(37,211,102,0.8); transform:translateY(-2px); }
+  .checkout-btn:disabled { opacity:0.35; cursor:not-allowed; background:#333; box-shadow:none; }
+  .checkout-btn svg { width:20px; height:20px; fill:currentColor; }
+  .clear-btn { width:100%; background:transparent; color:#ff3b3b; border:2px solid #ff3b3b; padding:11px; border-radius:12px; font-weight:700; font-size:0.88rem; cursor:pointer; margin-top:10px; transition:0.3s; }
+  .clear-btn:hover { background:#ff3b3b; color:#fff; box-shadow:0 6px 20px rgba(255,59,59,0.5); }
+
+  .chat-toggle {
+    position:fixed; bottom:25px; right:25px; z-index:9997;
+    width:62px; height:62px; border-radius:50%;
+    background:linear-gradient(135deg, #007bff, #0056b3);
+    border:3px solid #fff; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 8px 30px rgba(0,123,255,0.7);
+    transition:all 0.3s ease; animation:chatPulse 2s infinite; overflow:hidden;
+  }
+  @keyframes chatPulse { 0%,100% { box-shadow:0 8px 30px rgba(0,123,255,0.7); } 50% { box-shadow:0 8px 45px rgba(0,123,255,1); } }
+  .chat-toggle:hover { transform:scale(1.1); box-shadow:0 12px 40px rgba(0,123,255,1); }
+  .chat-toggle img { width:100%; height:100%; object-fit:cover; }
+  .chat-toggle svg { width:30px; height:30px; fill:#fff; }
+  .chat-toggle.open { background:linear-gradient(135deg, #ff3b3b, #c41e1e); animation:none; }
+  .chat-toggle.open img { display:none; }
+  .chat-toggle.open svg.chat-svg { display:block !important; }
+
+  .chat-window {
+    position:fixed; bottom:105px; right:25px; z-index:9996;
+    width:390px; max-width:calc(100vw - 30px);
+    height:560px; max-height:calc(100vh - 135px);
+    background:linear-gradient(180deg, #0d0d0d, #0a0a0a);
+    border:2px solid #007bff; border-radius:18px; overflow:hidden;
+    display:flex; flex-direction:column;
+    box-shadow:0 15px 60px rgba(0,123,255,0.6);
+    transform:translateY(30px) scale(0.9); opacity:0; visibility:hidden;
+    transition:all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .chat-window.open { transform:translateY(0) scale(1); opacity:1; visibility:visible; }
+
+  .chat-header { background:linear-gradient(135deg, #007bff, #0056b3); padding:16px 18px; display:flex; align-items:center; gap:12px; border-bottom:2px solid rgba(255,255,255,0.2); }
+  .chat-avatar { width:46px; height:46px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; font-size:1.3rem; border:2px solid #fff; overflow:hidden; flex-shrink:0; box-shadow:0 0 15px rgba(255,255,255,0.5); }
+  .chat-avatar img { width:100%; height:100%; object-fit:cover; }
+  .chat-header-info { flex:1; }
+  .chat-header-info h3 { font-size:1rem; color:#fff; margin-bottom:3px; font-weight:700; letter-spacing:0.5px; }
+  .chat-header-info p { font-size:0.72rem; color:#e0e0e0; display:flex; align-items:center; gap:5px; }
+  .chat-header-info p::before { content:''; width:8px; height:8px; border-radius:50%; background:#25D366; box-shadow:0 0 8px #25D366; animation:pulse 1.5s infinite; }
+  .chat-close { background:transparent; border:none; color:#fff; font-size:1.5rem; cursor:pointer; padding:5px; transition:0.3s; line-height:1; }
+  .chat-close:hover { transform:rotate(90deg); }
+
+  .chat-messages { flex:1; overflow-y:auto; padding:15px; display:flex; flex-direction:column; gap:12px; background:#080808; }
+  .chat-messages::-webkit-scrollbar { width:6px; }
+  .chat-messages::-webkit-scrollbar-track { background:#1a1a1a; }
+  .chat-messages::-webkit-scrollbar-thumb { background:#007bff; border-radius:3px; }
+
+  .chat-msg { max-width:85%; padding:11px 15px; border-radius:15px; font-size:0.88rem; line-height:1.55; word-wrap:break-word; animation:msgSlide 0.3s ease; }
+  @keyframes msgSlide { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+  .chat-msg.bot { background:linear-gradient(145deg, #1a1a1a, #111); color:#fff; align-self:flex-start; border:1px solid rgba(0,123,255,0.5); border-bottom-left-radius:4px; }
+  .chat-msg.user { background:linear-gradient(135deg, #007bff, #0056b3); color:#fff; align-self:flex-end; border-bottom-right-radius:4px; box-shadow:0 4px 15px rgba(0,123,255,0.4); }
+  .chat-msg.bot strong { color:#00d4ff; }
+  .chat-msg .wa-link { display:inline-block; margin-top:8px; padding:7px 14px; background:linear-gradient(135deg, #25D366, #1da851); color:#fff; border-radius:15px; font-weight:700; font-size:0.78rem; box-shadow:0 4px 15px rgba(37,211,102,0.5); }
+  .chat-msg .item-list { margin-top:8px; padding:10px; background:rgba(0,0,0,0.5); border-radius:8px; border-left:3px solid #007bff; }
+  .chat-msg .item-list div { padding:4px 0; font-size:0.83rem; line-height:1.4; }
+
+  .chat-quick { padding:10px 12px; display:flex; gap:8px; flex-wrap:wrap; background:#0d0d0d; border-top:1px solid #222; }
+  .quick-btn { background:transparent; border:1.5px solid #007bff; color:#007bff; padding:6px 14px; border-radius:15px; cursor:pointer; font-size:0.75rem; font-weight:700; transition:0.3s; font-family:inherit; }
+  .quick-btn:hover { background:#007bff; color:#fff; box-shadow:0 4px 12px rgba(0,123,255,0.5); }
+
+  .chat-input-area { padding:12px; background:#000; border-top:2px solid #007bff; display:flex; gap:8px; }
+  .chat-input { flex:1; background:#1a1a1a; border:1.5px solid #333; color:#fff; padding:11px 16px; border-radius:25px; outline:none; font-size:0.88rem; font-family:inherit; transition:0.3s; }
+  .chat-input:focus { border-color:#007bff; box-shadow:0 0 15px rgba(0,123,255,0.4); }
+  .chat-send { background:linear-gradient(135deg, #007bff, #0056b3); border:none; color:#fff; width:46px; height:46px; border-radius:50%; cursor:pointer; transition:0.3s; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .chat-send:hover { transform:scale(1.1) rotate(-15deg); box-shadow:0 0 20px #007bff; }
+  .chat-send svg { width:20px; height:20px; fill:#fff; }
+
+  .typing-dots { display:inline-flex; gap:4px; align-items:center; }
+  .typing-dots span { width:6px; height:6px; border-radius:50%; background:#007bff; animation:typing 1.4s infinite; }
+  .typing-dots span:nth-child(2) { animation-delay:0.2s; }
+  .typing-dots span:nth-child(3) { animation-delay:0.4s; }
+  @keyframes typing { 0%, 60%, 100% { opacity:0.3; transform:translateY(0); } 30% { opacity:1; transform:translateY(-5px); } }
+
+  /* ORDER SUCCESS MODAL */
+  .success-overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,0.9); backdrop-filter:blur(10px);
+    z-index:99999; display:none; align-items:center; justify-content:center; padding:20px;
+  }
+  .success-overlay.show { display:flex; animation:fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+  .success-box {
+    max-width:480px; width:100%; background:linear-gradient(145deg, #111, #0a0a0a);
+    border:2px solid #25D366; border-radius:20px; padding:40px 30px;
+    text-align:center; box-shadow:0 20px 60px rgba(37,211,102,0.5);
+    animation:popIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  @keyframes popIn { from { transform:scale(0.8); opacity:0; } to { transform:scale(1); opacity:1; } }
+  .success-icon { font-size:4rem; margin-bottom:15px; animation:bounce 0.6s ease; }
+  @keyframes bounce { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-15px); } }
+  .success-box h2 { color:#25D366; margin-bottom:10px; font-size:1.6rem; letter-spacing:1px; }
+  .success-box p { color:#bbb; margin-bottom:20px; line-height:1.6; }
+  .success-box .order-details {
+    background:rgba(0,0,0,0.5); border:1px solid rgba(0,123,255,0.4);
+    border-radius:12px; padding:18px; margin:20px 0; text-align:left;
+  }
+  .success-box .order-details div { padding:6px 0; color:#ddd; font-size:0.9rem; }
+  .success-box .order-details strong { color:#00d4ff; }
+  .success-box button {
+    width:100%; padding:14px; margin-top:10px;
+    background:linear-gradient(135deg, #007bff, #0056b3);
+    color:#fff; border:none; border-radius:12px;
+    font-weight:800; font-size:1rem; cursor:pointer;
+    transition:0.3s; letter-spacing:1px;
+  }
+  .success-box button:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,123,255,0.6); }
+
+  /* ORDER FORM MODAL */
+  .form-overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,0.9); backdrop-filter:blur(10px);
+    z-index:99999; display:none; align-items:center; justify-content:center; padding:20px;
+  }
+  .form-overlay.show { display:flex; animation:fadeIn 0.3s ease; }
+  .form-box {
+    max-width:480px; width:100%; max-height:90vh; overflow-y:auto;
+    background:linear-gradient(145deg, #111, #0a0a0a);
+    border:2px solid #007bff; border-radius:20px; padding:35px 30px;
+    box-shadow:0 20px 60px rgba(0,123,255,0.5);
+    animation:popIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .form-box h2 { color:#00d4ff; margin-bottom:8px; font-size:1.5rem; letter-spacing:1px; text-align:center; }
+  .form-box .form-subtitle { color:#666; font-size:0.85rem; margin-bottom:25px; text-align:center; }
+  .form-group { margin-bottom:16px; }
+  .form-group label { display:block; color:#888; font-size:0.75rem; margin-bottom:6px; text-transform:uppercase; letter-spacing:1px; font-weight:700; }
+  .form-group input, .form-group textarea {
+    width:100%; padding:14px 16px;
+    background:rgba(0,0,0,0.6); border:2px solid #333;
+    color:#fff; border-radius:10px; font-size:0.95rem;
+    outline:none; transition:0.3s; font-family:inherit;
+  }
+  .form-group input:focus, .form-group textarea:focus {
+    border-color:#007bff; box-shadow:0 0 15px rgba(0,123,255,0.3);
+  }
+  .form-group textarea { resize:vertical; min-height:80px; }
+  .form-summary {
+    background:rgba(0,123,255,0.08); border:1px solid rgba(0,123,255,0.3);
+    border-radius:10px; padding:14px; margin-bottom:20px;
+    max-height:150px; overflow-y:auto;
+  }
+  .form-summary h4 { color:#00d4ff; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+  .form-summary .sum-item { display:flex; justify-content:space-between; padding:3px 0; font-size:0.85rem; color:#ddd; }
+  .form-summary .sum-total { display:flex; justify-content:space-between; padding-top:8px; margin-top:8px; border-top:1px solid rgba(0,123,255,0.3); font-weight:800; color:#00d4ff; }
+  .form-actions { display:flex; gap:10px; margin-top:20px; }
+  .form-actions button {
+    flex:1; padding:14px; border-radius:12px; font-weight:800;
+    font-size:0.92rem; cursor:pointer; transition:0.3s; letter-spacing:0.5px;
+    border:none; font-family:inherit;
+  }
+  .form-submit { background:linear-gradient(135deg, #25D366, #1da851); color:#fff; }
+  .form-submit:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 8px 25px rgba(37,211,102,0.6); }
+  .form-submit:disabled { opacity:0.5; cursor:not-allowed; }
+  .form-cancel { background:transparent; color:#ff3b3b; border:2px solid #ff3b3b; }
+  .form-cancel:hover { background:#ff3b3b; color:#fff; }
+
+  @media (max-width: 900px) {
+    .grid-3 { grid-template-columns:repeat(2, 1fr); }
+    .grid-4 { grid-template-columns:repeat(2, 1fr); }
+    .banner-content h1 { font-size:2.2rem; }
+    .page-banner.home-banner .banner-content h1 { font-size:2.5rem; }
+    .page-banner.home-banner .banner-content p { font-size:1.1rem; }
+    .page-banner { min-height:260px; }
+    .page-banner.home-banner { min-height:400px; }
+    .card img { height:170px; }
+  }
+
+  @media (max-width: 700px) {
+    .navbar { padding:10px 15px; flex-wrap:wrap; position:relative; }
+    .menu-btn { display:block; }
+    .logo { font-size:0.95rem; }
+    .cart-btn { padding:6px 12px; font-size:0.78rem; gap:5px; }
+    .cart-btn svg { width:14px; height:14px; }
+    .nav-right { flex-direction:column; width:100%; gap:0; position:absolute; top:100%; left:0; background:rgba(0,0,0,0.98); backdrop-filter:blur(20px); border-bottom:2px solid #007bff; padding:10px 0; display:none; }
+    .nav-right.show { display:flex; }
+    .nav-links { flex-direction:column; width:100%; gap:0; }
+    .nav-links li { width:100%; }
+    .nav-links a { padding:14px 20px; border-bottom:1px solid #222; border-radius:0; text-align:left; }
+    .dropdown-menu { position:static; display:none; border:none; background:rgba(0,123,255,0.05); box-shadow:none; padding-left:15px; max-height:none; animation:none; }
+    .dropdown:hover .dropdown-menu { display:none; }
+    .dropdown.open .dropdown-menu { display:block; }
+    .grid-3, .grid-4 { grid-template-columns:1fr; }
+    .banner-content h1 { font-size:1.7rem; letter-spacing:1.5px; }
+    .banner-content p { font-size:0.85rem; letter-spacing:2px; }
+    .page-banner { min-height:220px; }
+    .page-banner.home-banner { min-height:320px; }
+    .page-banner.home-banner .banner-content h1 { font-size:1.8rem; }
+    .page-banner.home-banner .banner-content p { font-size:0.9rem; }
+    .page-banner.home-banner .banner-content::before { font-size:0.65rem; letter-spacing:3px; }
+    .cart-modal { width:100%; right:-100%; }
+    .container { padding:25px 15px; }
+    .section-title { font-size:1.5rem; margin:35px 0 25px; }
+    .chat-toggle { width:56px; height:56px; bottom:15px; right:15px; }
+    .chat-toggle svg { width:26px; height:26px; }
+    .chat-window { width:calc(100vw - 20px); right:10px; bottom:85px; height:calc(100vh - 110px); max-height:calc(100vh - 110px); border-radius:14px; }
+    .chat-msg { max-width:90%; font-size:0.85rem; }
+    .chat-header-info h3 { font-size:0.9rem; }
+  }
+
+  @media (max-width: 480px) {
+    .logo { font-size:0.8rem; }
+    .cart-btn { padding:5px 10px; font-size:0.72rem; }
+    .cart-btn span:not(.cart-count) { display:none; }
+    .banner-content h1 { font-size:1.4rem; }
+    .page-banner.home-banner .banner-content h1 { font-size:1.5rem; }
+    .banner-content p { font-size:0.78rem; letter-spacing:1px; }
+    .btn { padding:11px 24px; font-size:0.85rem; }
+    .card img { height:160px; }
+    .card-title { font-size:0.88rem; min-height:38px; }
+    .card-price { font-size:1.05rem; }
+    .add-btn, .order-btn { font-size:0.75rem; padding:8px; }
+    .section-title { font-size:1.3rem; }
+    .cart-item img { width:58px; height:58px; }
+    .chat-quick { display:none; }
+    .about-content { padding:30px 20px; }
+    .about-content h2 { font-size:1.4rem; }
+    .form-box { padding:25px 20px; }
+    .form-box h2 { font-size:1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+</div>
+
+<nav class="navbar">
+  <a href="#" class="logo" onclick="showSection('home'); return false;">
+    TS <span>COMPUTER WORLD</span>
+  </a>
+  <button class="menu-btn" onclick="document.querySelector('.nav-right').classList.toggle('show')">&#9776;</button>
+  <div class="nav-right">
+    <ul class="nav-links">
+      <li><a href="#" data-target="home" class="nav-link active">HOME</a></li>
+      <li><a href="#" data-target="about" class="nav-link">ABOUT</a></li>
+      <li class="dropdown" id="productDropdown">
+        <a href="#" onclick="toggleDropdown(event)">PRODUCTS &#9662;</a>
+        <ul class="dropdown-menu">
+          <li><a href="#" data-target="casing" class="nav-link">CASING</a></li>
+          <li><a href="#" data-target="monitors" class="nav-link">MONITORS</a></li>
+          <li><a href="#" data-target="processor" class="nav-link">PROCESSOR</a></li>
+          <li><a href="#" data-target="motherboard" class="nav-link">MOTHERBOARD</a></li>
+          <li><a href="#" data-target="cpu-cooler" class="nav-link">CPU COOLER</a></li>
+          <li><a href="#" data-target="rgb-fans" class="nav-link">RGB FANS</a></li>
+          <li><a href="#" data-target="ram" class="nav-link">RAM</a></li>
+          <li><a href="#" data-target="ssd" class="nav-link">SSD</a></li>
+          <li><a href="#" data-target="hdd" class="nav-link">HDD</a></li>
+          <li><a href="#" data-target="keyboard" class="nav-link">KEYBOARD</a></li>
+          <li><a href="#" data-target="mouse" class="nav-link">MOUSE</a></li>
+          <li><a href="#" data-target="headset" class="nav-link">HEADSET</a></li>
+          <li><a href="#" data-target="games" class="nav-link">GAMES</a></li>
+        </ul>
+      </li>
+    </ul>
+    <button class="cart-btn" onclick="openCart()">
+      <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+      CART
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </div>
+</nav>
+
+<section id="home" class="section active">
+  <header class="page-banner home-banner">
+    <div class="banner-content">
+      <h1>TS COMPUTER WORLD</h1>
+      <p>BUILD YOUR DREAM GAMING PC</p>
+      <a href="#" class="btn" onclick="document.getElementById('builds').scrollIntoView({behavior:'smooth'}); return false;">VIEW BUILDS</a>
+    </div>
+  </header>
+  <div class="container" id="builds">
+    <h2 class="section-title">GAMING PC <span>BUILDS</span></h2>
+    <div class="grid-3">
+      <div class="card"><img src="pc1.jpg" alt="Gaming Build 1" loading="lazy"></div>
+      <div class="card"><img src="pc2.jpg" alt="Gaming Build 2" loading="lazy"></div>
+      <div class="card"><img src="pc3.jpg" alt="Gaming Build 3" loading="lazy"></div>
+      <div class="card"><img src="pc4.jpg" alt="Gaming Build 4" loading="lazy"></div>
+      <div class="card"><img src="pc5.jpg" alt="Gaming Build 5" loading="lazy"></div>
+      <div class="card"><img src="pc6.jpg" alt="Gaming Build 6" loading="lazy"></div>
+    </div>
+  </div>
+</section>
+
+<section id="about" class="section">
+  <header class="page-banner">
+    <div class="banner-content"><h1>ABOUT US</h1><p>TS COMPUTER WORLD</p></div>
+  </header>
+  <div class="container">
+    <h2 class="section-title">WHO <span>WE ARE</span></h2>
+    <div class="about-content">
+      <h2>TS COMPUTER WORLD</h2>
+      <p>We are passionate about building high-performance gaming PCs and providing top-quality computer components. From custom water-cooling to RGB lighting, we bring your dream setup to life.</p>
+      <p>Whether you're a casual gamer or a professional streamer, TS COMPUTER WORLD has the parts and expertise you need.</p>
+    </div>
+  </div>
+</section>
+
+<section id="casing" class="section"><header class="page-banner"><div class="banner-content"><h1>CASING</h1><p>PREMIUM PC CASES</p></div></header><div class="container"><div class="grid-4" id="grid-casing"></div></div></section>
+<section id="monitors" class="section"><header class="page-banner"><div class="banner-content"><h1>MONITORS</h1><p>CRYSTAL CLEAR DISPLAYS</p></div></header><div class="container"><div class="grid-4" id="grid-monitors"></div></div></section>
+<section id="processor" class="section"><header class="page-banner"><div class="banner-content"><h1>PROCESSOR</h1><p>POWER &amp; SPEED</p></div></header><div class="container"><div class="grid-4" id="grid-processor"></div></div></section>
+<section id="motherboard" class="section"><header class="page-banner"><div class="banner-content"><h1>MOTHERBOARD</h1><p>THE BACKBONE OF YOUR BUILD</p></div></header><div class="container"><div class="grid-4" id="grid-motherboard"></div></div></section>
+<section id="cpu-cooler" class="section"><header class="page-banner"><div class="banner-content"><h1>CPU COOLER</h1><p>KEEP IT COOL</p></div></header><div class="container"><div class="grid-4" id="grid-cpu-cooler"></div></div></section>
+<section id="rgb-fans" class="section"><header class="page-banner"><div class="banner-content"><h1>RGB FANS</h1><p>LIGHT UP YOUR RIG</p></div></header><div class="container"><div class="grid-4" id="grid-rgb-fans"></div></div></section>
+<section id="ram" class="section"><header class="page-banner"><div class="banner-content"><h1>RAM</h1><p>MULTITASK WITH EASE</p></div></header><div class="container"><div class="grid-4" id="grid-ram"></div></div></section>
+<section id="ssd" class="section"><header class="page-banner"><div class="banner-content"><h1>SSD</h1><p>LIGHTNING FAST STORAGE</p></div></header><div class="container"><div class="grid-4" id="grid-ssd"></div></div></section>
+<section id="hdd" class="section"><header class="page-banner"><div class="banner-content"><h1>HDD</h1><p>RELIABLE MASS STORAGE</p></div></header><div class="container"><div class="grid-4" id="grid-hdd"></div></div></section>
+<section id="keyboard" class="section"><header class="page-banner"><div class="banner-content"><h1>KEYBOARD</h1><p>JEDEL GAMING KEYBOARDS</p></div></header><div class="container"><div class="grid-4" id="grid-keyboard"></div></div></section>
+<section id="mouse" class="section"><header class="page-banner"><div class="banner-content"><h1>MOUSE</h1><p>JEDEL GAMING MICE</p></div></header><div class="container"><div class="grid-4" id="grid-mouse"></div></div></section>
+<section id="headset" class="section"><header class="page-banner"><div class="banner-content"><h1>HEADSET</h1><p>JEDEL GAMING HEADSETS</p></div></header><div class="container"><div class="grid-4" id="grid-headset"></div></div></section>
+<section id="games" class="section"><header class="page-banner"><div class="banner-content"><h1>GAMES</h1><p>TOP GAMING TITLES</p></div></header><div class="container"><div class="grid-4" id="grid-games"></div></div></section>
+
+<footer class="footer">
+  <p>&copy; 2025 TS COMPUTER WORLD — All Rights Reserved</p>
+</footer>
+
+<div class="cart-overlay" id="cartOverlay" onclick="closeCart()"></div>
+<aside class="cart-modal" id="cartModal">
+  <div class="cart-header">
+    <h2>YOUR <span>CART</span></h2>
+    <button class="close-cart" onclick="closeCart()">&#10005;</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="cart-empty">
+      <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+      <p>Your cart is empty</p>
+      <p style="font-size:0.85rem;margin-top:8px;">Add products to get started!</p>
+    </div>
+  </div>
+  <div class="cart-footer">
+    <div class="cart-total">
+      <span class="cart-total-label">TOTAL:</span>
+      <span class="cart-total-amount" id="cartTotal">Rs. 0</span>
+    </div>
+    <button class="checkout-btn" id="checkoutBtn" onclick="openOrderForm()" disabled>
+      <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+      PLACE ORDER
+    </button>
+    <button class="clear-btn" onclick="clearCart()">CLEAR CART</button>
+  </div>
+</aside>
+
+<div class="toast" id="toast">Added to cart!</div>
+
+<!-- ORDER FORM MODAL -->
+<div class="form-overlay" id="formOverlay">
+  <div class="form-box">
+    <h2>📦 Complete Your Order</h2>
+    <p class="form-subtitle">ඔබේ විස්තර පහත දාන්න</p>
+    <div class="form-summary" id="formSummary"></div>
+    <div class="form-group">
+      <label>👤 ඔබේ නම</label>
+      <input type="text" id="orderName" placeholder="Your Name" autocomplete="name">
+    </div>
+    <div class="form-group">
+      <label>📞 දුරකථන අංකය</label>
+      <input type="tel" id="orderPhone" placeholder="07X XXX XXXX" autocomplete="tel">
+    </div>
+    <div class="form-group">
+      <label>📍 ලිපිනය</label>
+      <textarea id="orderAddress" placeholder="Your Delivery Address"></textarea>
+    </div>
+    <div class="form-actions">
+      <button class="form-cancel" onclick="closeOrderForm()">Cancel</button>
+      <button class="form-submit" id="formSubmitBtn" onclick="submitOrder()">Place Order</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-box">
+    <div class="success-icon">✅</div>
+    <h2>Order Placed!</h2>
+    <p>ඔබේ order එක සාර්ථකව ලැබුණා</p>
+    <div class="order-details" id="successDetails"></div>
+    <p style="font-size:0.85rem;color:#666;">අපි ඉක්මනින් ඔබව සම්බන්ධ කරගන්නම් 🙏</p>
+    <button onclick="closeSuccess()">Continue Shopping</button>
+  </div>
+</div>
+
+<button class="chat-toggle" id="chatToggle" onclick="toggleChat()" title="AI සහායක">
+  <img src="logo.jpeg" alt="TS Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+  <svg class="chat-svg" viewBox="0 0 24 24" style="display:none;"><path d="M12 2C6.48 2 2 5.92 2 10.75c0 2.6 1.35 4.94 3.5 6.54V22l4.05-2.23c.78.16 1.6.25 2.45.25 5.52 0 10-3.92 10-8.75S17.52 2 12 2zm0 14.5c-.65 0-1.3-.07-1.92-.21l-.4-.08-2.43 1.34.35-2.4-.3-.28C5.87 13.6 5 12.23 5 10.75 5 7.06 8.13 4.5 12 4.5s7 2.56 7 6.25-3.13 6.25-7 6.25z"/></svg>
+</button>
+
+<div class="chat-window" id="chatWindow">
+  <div class="chat-header">
+    <div class="chat-avatar">
+      <img src="logo.jpeg" alt="TS Logo" onerror="this.style.display='none'; this.parentElement.innerHTML='🤖';">
+    </div>
+    <div class="chat-header-info">
+      <h3>TS Assistant</h3>
+      <p>Online • සිංහල සහායක</p>
+    </div>
+    <button class="chat-close" onclick="toggleChat()">&#10005;</button>
+  </div>
+  <div class="chat-messages" id="chatMessages"></div>
+  <div class="chat-quick" id="chatQuick">
+    <button class="quick-btn" onclick="quickAsk('හැම product එකක්ම පෙන්නන්න')">සියලු Products</button>
+    <button class="quick-btn" onclick="quickAsk('Casing prices කීයද?')">Casing</button>
+    <button class="quick-btn" onclick="quickAsk('GTA SA මිල කීයද?')">GTA SA</button>
+    <button class="quick-btn" onclick="quickAsk('Order කරන්නේ කොහොමද?')">Order</button>
+  </div>
+  <div class="chat-input-area">
+    <input type="text" class="chat-input" id="chatInput" placeholder="සිංහලෙන් ලියන්න..." onkeypress="if(event.key==='Enter') sendChat()">
+    <button class="chat-send" onclick="sendChat()">
+      <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   ⚙️ CONFIG — මේක විතරයි වෙනස් කරන්න ඕන
+   ============================================================ */
+
+// ⬇️ ඔබේ Google Apps Script URL එක මෙතන paste කරන්න
+const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbx.../exec";
+
+// WhatsApp number (chatbot එකේ contact link වලට ඕන)
 const WHATSAPP_NUMBER = "94754864672";
-async function checkoutCart() {
+
+/* ============================================================
+   PRODUCT DATA
+   ============================================================ */
+const products = {
+  casing: [
+    { name: "RUIX V8 casing", price: 7600 },
+    { name: "golden field Q14", price: 5500 },
+    { name: "EMpower Gaming casing L-200-i3", price: 7500 },
+    { name: "RUIX TITAN ATX Gaming Casing", price: 7500 },
+    { name: "ATX CASING - COLORSIT CL-A12", price: 4600 },
+    { name: "VERTEX SS1 GAMING CASING", price: 9200 },
+    { name: "THERMALTAKE VERSA N21 BLACK", price: 6500 },
+    { name: "ATX CASING - COLORSIT CL-G18", price: 5300 },
+    { name: "GAMING CASING - GAMEMAX SHINE(G517)", price: 6900 },
+    { name: "GAMING CASING - COLORSIT CL-L03 without p/s", price: 10300 }
+  ],
+  monitors: [
+    { name: "ABANS M215TN 21.5 MONITOR", price: 23450 },
+    { name: "MSI PRO MP225 21.5'' 100Hz FHD IPS ULTRA SLIM MONITOR", price: 27500 },
+    { name: "ASUS TUF 24\" 165Hz", price: 62000 },
+    { name: "MSI Optix 27\" 144Hz", price: 68000 },
+    { name: "AOC 24G2 144Hz", price: 55000 },
+    { name: "Dell 27\" 4K UHD", price: 125000 },
+    { name: "Gigabyte M27Q 170Hz", price: 88000 },
+    { name: "BenQ MOBIUZ 24\"", price: 58000 },
+    { name: "ViewSonic 22\" FHD", price: 26000 },
+    { name: "HP X27 165Hz QHD", price: 92000 }
+  ],
+  processor: [
+    { name: "Intel Core i3-12100F", price: 4950 },
+    { name: "Intel Core i5-12400F", price: 38000 },
+    { name: "Intel Core i5-13600K", price: 68000 },
+    { name: "Intel Core i7-13700K", price: 105000 },
+    { name: "Intel Core i9-13900K", price: 165000 },
+    { name: "AMD Ryzen 5 5600", price: 35000 },
+    { name: "AMD Ryzen 5 7600X", price: 62000 },
+    { name: "AMD Ryzen 7 5800X3D", price: 78000 },
+    { name: "AMD Ryzen 7 7700X", price: 95000 },
+    { name: "AMD Ryzen 9 7950X", price: 175000 }
+  ],
+  motherboard: [
+    { name: "ASUS Prime H610M-E", price: 18500 },
+    { name: "MSI B660M Pro", price: 32000 },
+    { name: "Gigabyte B760M DS3H", price: 38000 },
+    { name: "ASUS TUF Z790-Plus", price: 78000 },
+    { name: "MSI MAG B550 Tomahawk", price: 42000 },
+    { name: "ASRock B450M Pro4", price: 26000 },
+    { name: "Gigabyte X670 Aorus Elite", price: 92000 },
+    { name: "ASUS ROG Strix B650E", price: 85000 },
+    { name: "MSI MPG X570 Gaming", price: 56000 },
+    { name: "ASRock Z690 Steel Legend", price: 65000 }
+  ],
+  "cpu-cooler": [
+    { name: "Cooler Master Hyper 212", price: 7500 },
+    { name: "DeepCool AK400", price: 9800 },
+    { name: "Noctua NH-U12S", price: 18500 },
+    { name: "Be Quiet! Dark Rock 4", price: 22000 },
+    { name: "NZXT Kraken X53 AIO 240mm", price: 32000 },
+    { name: "Corsair H100i Elite 240mm", price: 42000 },
+    { name: "Lian Li Galahad 360mm", price: 48000 },
+    { name: "NZXT Kraken Z73 360mm", price: 68000 },
+    { name: "Arctic Liquid Freezer II 280", price: 38000 },
+    { name: "Thermaltake TOUGHLIQUID 240", price: 35000 }
+  ],
+  "rgb-fans": [
+    { name: "Cooler Master SickleFlow 120", price: 3200 },
+    { name: "Corsair ML120 RGB", price: 4500 },
+    { name: "NZXT Aer RGB 2 (Single)", price: 5800 },
+    { name: "Lian Li UNI Fan SL120", price: 6500 },
+    { name: "DeepCool CF120 Plus 3-Pack", price: 12000 },
+    { name: "Antec Prizm 120 ARGB 3-Pack", price: 9500 },
+    { name: "Thermaltake Pure 12 ARGB", price: 3800 },
+    { name: "Cooler Master MF120 Halo 3-Pack", price: 13500 },
+    { name: "Corsair LL120 RGB 3-Pack", price: 16500 },
+    { name: "Phanteks Halos Lux Digital", price: 4200 }
+  ],
+  ram: [
+    { name: "Kingston 8GB DDR4 3200MHz", price: 6500 },
+    { name: "Corsair Vengeance 8GB DDR4", price: 7800 },
+    { name: "G.Skill Ripjaws 16GB (2x8) DDR4", price: 14500 },
+    { name: "Kingston Fury 16GB DDR4 3600", price: 15500 },
+    { name: "Corsair Vengeance RGB 16GB DDR4", price: 18500 },
+    { name: "G.Skill Trident Z RGB 16GB DDR4", price: 21500 },
+    { name: "TeamGroup 32GB (2x16) DDR4", price: 28500 },
+    { name: "Corsair Vengeance 32GB DDR5 5600", price: 42000 },
+    { name: "G.Skill Trident Z5 32GB DDR5 6000", price: 52000 },
+    { name: "Kingston Fury Beast 64GB DDR5", price: 88000 }
+  ],
+  ssd: [
+    { name: "Kingston A400 240GB SATA", price: 6500 },
+    { name: "WD Green 480GB SATA", price: 9500 },
+    { name: "Crucial BX500 1TB SATA", price: 16500 },
+    { name: "Samsung 870 EVO 500GB SATA", price: 14500 },
+    { name: "WD Blue SN570 500GB NVMe", price: 12500 },
+    { name: "Samsung 980 1TB NVMe", price: 22500 },
+    { name: "Crucial P3 1TB NVMe", price: 18500 },
+    { name: "Samsung 980 Pro 1TB NVMe Gen4", price: 32000 },
+    { name: "WD Black SN850X 2TB Gen4", price: 58000 },
+    { name: "Seagate FireCuda 530 2TB Gen4", price: 65000 }
+  ],
+  hdd: [
+    { name: "WD Blue 500GB HDD", price: 5500 },
+    { name: "Seagate Barracuda 1TB", price: 8500 },
+    { name: "WD Blue 1TB HDD", price: 9000 },
+    { name: "Toshiba 2TB HDD", price: 15500 },
+    { name: "Seagate Barracuda 2TB", price: 16500 },
+    { name: "WD Purple 2TB Surveillance", price: 18500 },
+    { name: "WD Blue 4TB HDD", price: 28500 },
+    { name: "Seagate IronWolf 4TB NAS", price: 34000 },
+    { name: "WD Black 4TB Performance", price: 38000 },
+    { name: "Seagate IronWolf 8TB NAS", price: 62000 }
+  ],
+  keyboard: [
+    { name: "JEDEL KB510 USB Gaming Keyboard", price: 2500 },
+    { name: "JEDEL KL‑141 68‑Key Mechanical Gaming Keyboard", price: 5000 },
+    { name: "HP H-880 Wired Keyboard", price: 2200 },
+    { name: "JEQANG JK-922 RGB Mechanical Keyboard", price: 2600 },
+    { name: "JEDEL K11 3 Language Keyboard", price: 1200 },
+    { name: "JEDEL K500+ RGB KEYBOARD", price: 3300 },
+    { name: "Jedel K-511 RGB Gaming Keyboard", price: 5000 },
+    { name: "AULA F3261 ARGB MUSIC SYNC MECHNICAL KEYBAORD", price: 9900 },
+    { name: "HP GK100F Mechanical Gaming Keyboard", price: 6300 },
+    { name: "A61K 61KEYS White / Black Mechanical Keyboard", price: 6400 }
+  ],
+  mouse: [
+    { name: "JEDEL 220 USB Optical Wired Mouse", price: 550 },
+    { name: "JEDEL GM850 RGB Gaming Mouse", price: 900 },
+    { name: "JEDEL M66 Gaming USB Optical Mouse", price: 950 },
+    { name: "JEDEL M66 Gaming USB Optical Mouse (Pro)", price: 1700 },
+    { name: "JEDEL GM1080 Gaming Mouse", price: 3000 },
+    { name: "JEDEL GM840 Wired RGB Gaming E Sport Mouse", price: 2100 },
+    { name: "Jedel GM 830 Gaming Mouse", price: 2900 },
+    { name: "JEDEL 230+ WIRED MOUSE 1000DPI", price: 1000 },
+    { name: "JEDEL Gaming mouse GM691", price: 2500 },
+    { name: "JEDEL GM1180 RGB Gaming Mouse Wired USB Programmable Mouse 7200 DPI", price: 3400 }
+  ],
+  headset: [
+    { name: "JEDEL HS710 Stereo Gaming Headset", price: 3500 },
+    { name: "JEDEL HS712 RGB Gaming Headset", price: 4500 },
+    { name: "JEDEL HS715 7.1 Surround Gaming Headset", price: 6500 },
+    { name: "JEDEL HS718 RGB 7.1 Gaming Headset", price: 8500 },
+    { name: "JEDEL HS720 Wireless Gaming Headset", price: 9500 },
+    { name: "JEDEL HS722 Pro Gaming Headset", price: 5500 },
+    { name: "JEDEL HS725 RGB Backlit Gaming Headset", price: 4800 },
+    { name: "JEDEL HS728 Noise Cancelling Gaming Headset", price: 7500 },
+    { name: "JEDEL HS730 Wireless RGB Gaming Headset", price: 11500 },
+    { name: "JEDEL HS735 Pro Wireless 7.1 Gaming Headset", price: 14500 }
+  ],
+  games: [
+    { name: "HALO 2", price: 75 },
+    { name: "TOMB RIDER", price: 900 },
+    { name: "POP", price: 75 },
+    { name: "SPIDER MAN UNLIMITED", price: 45 },
+    { name: "SPIDER MAN 2", price: 225 },
+    { name: "loard of the king return of the king", price: 25 },
+    { name: "X-MAN", price: 100 },
+    { name: "GTA SA", price: 100 },
+    { name: "EARBEN SHADOW", price: 75 },
+    { name: "HIT MAN 2", price: 25 }
+  ]
+};
+
+const startIndex = {
+  casing: 1, monitors: 11, processor: 21, motherboard: 31,
+  "cpu-cooler": 41, "rgb-fans": 51, ram: 61, ssd: 71, hdd: 81,
+  keyboard: 91, mouse: 101, headset: 111, games: 121
+};
+
+const categoryNames = {
+  casing: "Casing (PC කේස්)",
+  monitors: "Monitors (මොනිටර්)",
+  processor: "Processors (ප්‍රොසෙසර්)",
+  motherboard: "Motherboards (මව් බෝඩ්)",
+  "cpu-cooler": "CPU Coolers (කූලර්)",
+  "rgb-fans": "RGB Fans (RGB ෆෑන්)",
+  ram: "RAM (මතකය)",
+  ssd: "SSD (ස්ටෝරේජ්)",
+  hdd: "HDD (හාඩ් ඩිස්ක්)",
+  keyboard: "Keyboards (යතුරුපුවරු)",
+  mouse: "Mice (මවුස්)",
+  headset: "Headsets (හෙඩ්සෙට්)",
+  games: "Games (ගේම්ස්)"
+};
+
+let cart = [];
+
+const cartPlusIcon = '<svg viewBox="0 0 24 24"><path d="M11 9h2V6h3V4h-3V1h-2v3H8v2h3v3zm-4 9c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2zm-9.83-3.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25z"/></svg>';
+const cartIcon = '<svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>';
+
+Object.keys(products).forEach(category => {
+  const grid = document.getElementById('grid-' + category);
+  if (!grid) return;
+  const start = startIndex[category];
+  products[category].forEach((product, i) => {
+    const imgNum = start + i;
+    const productId = category + '-' + imgNum;
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <img src="${imgNum}.jpg" alt="${product.name}" loading="lazy">
+      <div class="card-body">
+        <div class="card-title">${product.name}</div>
+        <div class="card-price">Rs. ${product.price.toLocaleString()}</div>
+        <div class="card-actions">
+          <button class="add-btn" onclick="addToCart('${productId}', '${product.name.replace(/'/g, "\\'")}', ${product.price}, ${imgNum})">
+            ${cartPlusIcon} ADD
+          </button>
+          <button class="order-btn" onclick="orderSingle('${product.name.replace(/'/g, "\\'")}', ${product.price})">
+            ${cartIcon} ORDER
+          </button>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+});
+
+function addToCart(id, name, price, img) {
+  const existing = cart.find(item => item.id === id);
+  if (existing) {
+    existing.qty += 1;
+    showToast(`"${name}" quantity updated`);
+  } else {
+    cart.push({ id, name, price, img, qty: 1 });
+    showToast(`"${name}" added to cart!`);
+  }
+  renderCart();
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(item => item.id !== id);
+  renderCart();
+}
+
+function changeQty(id, delta) {
+  const item = cart.find(i => i.id === id);
+  if (!item) return;
+  item.qty += delta;
+  if (item.qty <= 0) removeFromCart(id);
+  else renderCart();
+}
+
+function clearCart() {
   if (cart.length === 0) return;
+  if (confirm("Are you sure you want to clear the cart?")) {
+    cart = [];
+    renderCart();
+    showToast("Cart cleared");
+  }
+}
 
-  const name = prompt("👤 ඔබේ නම ඇතුළත් කරන්න:");
-  if (!name || !name.trim()) return;
+function renderCart() {
+  const container = document.getElementById('cartItems');
+  const totalEl = document.getElementById('cartTotal');
+  const countEl = document.getElementById('cartCount');
+  const checkoutBtn = document.getElementById('checkoutBtn');
 
-  const phone = prompt("📞 ඔබේ දුරකථන අංකය:");
-  if (!phone || !phone.trim()) return;
+  const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+  countEl.textContent = totalQty;
 
-  const address = prompt("📍 ඔබේ ලිපිනය:");
-  if (!address || !address.trim()) return;
+  if (cart.length === 0) {
+    container.innerHTML = `
+      <div class="cart-empty">
+        <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+        <p>Your cart is empty</p>
+        <p style="font-size:0.85rem;margin-top:8px;">Add products to get started!</p>
+      </div>`;
+    totalEl.textContent = 'Rs. 0';
+    checkoutBtn.disabled = true;
+    return;
+  }
 
+  let html = '';
+  let total = 0;
+  cart.forEach(item => {
+    const subtotal = item.price * item.qty;
+    total += subtotal;
+    html += `
+      <div class="cart-item">
+        <img src="${item.img}.jpg" alt="${item.name}">
+        <div class="cart-item-info">
+          <div class="cart-item-name">${item.name}</div>
+          <div class="cart-item-price">Rs. ${item.price.toLocaleString()}</div>
+          <div class="cart-item-qty">
+            <button class="qty-btn" onclick="changeQty('${item.id}', -1)">−</button>
+            <span class="qty-value">${item.qty}</span>
+            <button class="qty-btn" onclick="changeQty('${item.id}', 1)">+</button>
+            <span style="margin-left:auto;color:#00d4ff;font-weight:800;font-size:0.88rem;">Rs. ${subtotal.toLocaleString()}</span>
+          </div>
+        </div>
+        <button class="remove-btn" onclick="removeFromCart('${item.id}')" title="Remove">&#10005;</button>
+      </div>`;
+  });
+  container.innerHTML = html;
+  totalEl.textContent = 'Rs. ' + total.toLocaleString();
+  checkoutBtn.disabled = false;
+}
+
+/* ---------- ORDER FORM ---------- */
+let pendingOrder = null;
+
+function openOrderForm() {
+  if (cart.length === 0) return;
+  let total = 0;
+  let summaryHtml = '<h4>📦 Order Summary</h4>';
+  cart.forEach(item => {
+    const sub = item.price * item.qty;
+    total += sub;
+    summaryHtml += `<div class="sum-item"><span>${item.name} × ${item.qty}</span><span>Rs. ${sub.toLocaleString()}</span></div>`;
+  });
+  summaryHtml += `<div class="sum-total"><span>TOTAL</span><span>Rs. ${total.toLocaleString()}</span></div>`;
+  document.getElementById('formSummary').innerHTML = summaryHtml;
+  
+  // Reset fields
+  document.getElementById('orderName').value = '';
+  document.getElementById('orderPhone').value = '';
+  document.getElementById('orderAddress').value = '';
+  
+  document.getElementById('formOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('orderName').focus(), 300);
+}
+
+function closeOrderForm() {
+  document.getElementById('formOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+async function submitOrder() {
+  const name = document.getElementById('orderName').value.trim();
+  const phone = document.getElementById('orderPhone').value.trim();
+  const address = document.getElementById('orderAddress').value.trim();
+  
+  if (!name) { alert("ඔබේ නම ඇතුළත් කරන්න"); document.getElementById('orderName').focus(); return; }
+  if (!phone) { alert("දුරකථන අංකය ඇතුළත් කරන්න"); document.getElementById('orderPhone').focus(); return; }
+  if (!address) { alert("ලිපිනය ඇතුළත් කරන්න"); document.getElementById('orderAddress').focus(); return; }
+  if (cart.length === 0) { alert("Cart එකේ items නැහැ"); return; }
+  
+  const submitBtn = document.getElementById('formSubmitBtn');
+  submitBtn.disabled = true;
+  submitBtn.textContent = '⏳ Placing...';
+  
   let total = 0;
   const items = cart.map(item => {
     const subtotal = item.price * item.qty;
     total += subtotal;
-    return {
-      name: item.name,
-      price: item.price,
-      qty: item.qty,
-      subtotal: subtotal
-    };
+    return { name: item.name, price: item.price, qty: item.qty, subtotal: subtotal };
   });
-
+  
   const orderData = {
     action: 'newOrder',
-    customerName: name.trim(),
-    customerPhone: phone.trim(),
-    customerAddress: address.trim(),
+    customerName: name,
+    customerPhone: phone,
+    customerAddress: address,
     items: items,
     total: total
   };
-
+  
+  const orderId = 'TS' + Date.now().toString().slice(-6);
+  const orderDate = new Date().toLocaleString('en-GB');
+  
   try {
-    showToast("⏳ Order යවනවා...");
-    
-    const response = await fetch(SHEET_API_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(orderData)
-    });
-
-    // Google Apps Script no-cors නිසා response එක කියවන්න බැහැ
-    // ඒත් request එක යනවා
-    showToast("✅ Order එක සාර්ථකව ලැබුණා!");
-    
-    setTimeout(() => {
-      cart = [];
-      renderCart();
-      closeCart();
-      alert(
-        `✅ ඔබේ Order එක සාර්ථකව ලැබුණා!\n\n` +
-        `👤 නම: ${name}\n` +
-        `📞 දුරකථන: ${phone}\n` +
-        `💰 මුළු මුදල: Rs. ${total.toLocaleString()}\n\n` +
-        `අපි ඉක්මනින් ඔබව සම්බන්ධ කරගන්නම්. ස්තූතියි! 🙏`
-      );
-    }, 500);
-
-  } catch (error) {
-    console.error("Order error:", error);
-    showToast("❌ Order යවන්න බැරි වුණා. නැවත try කරන්න.");
-  }
-}
-async function orderSingle(productName, price) {
-  const name = prompt(`"${productName}" order කරන්න\n\n👤 ඔබේ නම:`);
-  if (!name || !name.trim()) return;
-
-  const phone = prompt("📞 ඔබේ දුරකථන අංකය:");
-  if (!phone || !phone.trim()) return;
-
-  const address = prompt("📍 ඔබේ ලිපිනය:");
-  if (!address || !address.trim()) return;
-
-  const orderData = {
-    action: 'newOrder',
-    customerName: name.trim(),
-    customerPhone: phone.trim(),
-    customerAddress: address.trim(),
-    items: [{
-      name: productName,
-      price: price,
-      qty: 1,
-      subtotal: price
-    }],
-    total: price
-  };
-
-  try {
-    showToast("⏳ Order යවනවා...");
     await fetch(SHEET_API_URL, {
       method: 'POST',
       mode: 'no-cors',
@@ -101,18 +1012,418 @@ async function orderSingle(productName, price) {
       body: JSON.stringify(orderData)
     });
     
-    showToast("✅ Order එක ලැබුණා!");
-    setTimeout(() => {
-      alert(
-        `✅ Order එක සාර්ථකව ලැබුණා!\n\n` +
-        `📦 ${productName}\n` +
-        `💰 Rs. ${price.toLocaleString()}\n\n` +
-        `අපි ඉක්මනින් සම්බන්ධ කරගන්නම්! 🙏`
-      );
-    }, 500);
+    // Success modal
+    document.getElementById('successDetails').innerHTML = `
+      <div><strong>Order ID:</strong> ${orderId}</div>
+      <div><strong>නම:</strong> ${name}</div>
+      <div><strong>දුරකථන:</strong> ${phone}</div>
+      <div><strong>මුළු මුදල:</strong> Rs. ${total.toLocaleString()}</div>
+      <div><strong>දිනය:</strong> ${orderDate}</div>
+    `;
     
-  } catch (err) {
-    console.error(err);
-    showToast("❌ Order යවන්න බැරි වුණා.");
+    closeOrderForm();
+    closeCart();
+    cart = [];
+    renderCart();
+    
+    document.getElementById('successOverlay').classList.add('show');
+    
+  } catch (error) {
+    console.error("Order error:", error);
+    alert("❌ Order යවන්න බැරි වුණා. නැවත try කරන්න.");
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Place Order';
   }
 }
+
+function closeSuccess() {
+  document.getElementById('successOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+/* ---------- SINGLE ORDER ---------- */
+async function orderSingle(productName, price) {
+  let total = price;
+  let items = [{ name: productName, price: price, qty: 1, subtotal: price }];
+  
+  let summaryHtml = '<h4>📦 Order Summary</h4>';
+  summaryHtml += `<div class="sum-item"><span>${productName} × 1</span><span>Rs. ${price.toLocaleString()}</span></div>`;
+  summaryHtml += `<div class="sum-total"><span>TOTAL</span><span>Rs. ${total.toLocaleString()}</span></div>`;
+  document.getElementById('formSummary').innerHTML = summaryHtml;
+  
+  document.getElementById('orderName').value = '';
+  document.getElementById('orderPhone').value = '';
+  document.getElementById('orderAddress').value = '';
+  
+  pendingOrder = { items: items, total: total };
+  
+  document.getElementById('formOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => document.getElementById('orderName').focus(), 300);
+}
+
+/* ---------- OVERRIDE submitOrder for single items ---------- */
+const originalSubmit = submitOrder;
+submitOrder = async function() {
+  const name = document.getElementById('orderName').value.trim();
+  const phone = document.getElementById('orderPhone').value.trim();
+  const address = document.getElementById('orderAddress').value.trim();
+  
+  if (!name) { alert("ඔබේ නම ඇතුළත් කරන්න"); document.getElementById('orderName').focus(); return; }
+  if (!phone) { alert("දුරකථන අංකය ඇතුළත් කරන්න"); document.getElementById('orderPhone').focus(); return; }
+  if (!address) { alert("ලිපිනය ඇතුළත් කරන්න"); document.getElementById('orderAddress').focus(); return; }
+  
+  let items, total;
+  
+  if (pendingOrder) {
+    // Single item order
+    items = pendingOrder.items;
+    total = pendingOrder.total;
+  } else {
+    // Cart order
+    if (cart.length === 0) { alert("Cart එකේ items නැහැ"); return; }
+    total = 0;
+    items = cart.map(item => {
+      const subtotal = item.price * item.qty;
+      total += subtotal;
+      return { name: item.name, price: item.price, qty: item.qty, subtotal: subtotal };
+    });
+  }
+  
+  const submitBtn = document.getElementById('formSubmitBtn');
+  submitBtn.disabled = true;
+  submitBtn.textContent = '⏳ Placing...';
+  
+  const orderData = {
+    action: 'newOrder',
+    customerName: name,
+    customerPhone: phone,
+    customerAddress: address,
+    items: items,
+    total: total
+  };
+  
+  const orderId = 'TS' + Date.now().toString().slice(-6);
+  const orderDate = new Date().toLocaleString('en-GB');
+  
+  try {
+    await fetch(SHEET_API_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderData)
+    });
+    
+    document.getElementById('successDetails').innerHTML = `
+      <div><strong>Order ID:</strong> ${orderId}</div>
+      <div><strong>නම:</strong> ${name}</div>
+      <div><strong>දුරකථන:</strong> ${phone}</div>
+      <div><strong>මුළු මුදල:</strong> Rs. ${total.toLocaleString()}</div>
+      <div><strong>දිනය:</strong> ${orderDate}</div>
+    `;
+    
+    closeOrderForm();
+    if (!pendingOrder) {
+      closeCart();
+      cart = [];
+      renderCart();
+    }
+    pendingOrder = null;
+    
+    document.getElementById('successOverlay').classList.add('show');
+    
+  } catch (error) {
+    console.error("Order error:", error);
+    alert("❌ Order යවන්න බැරි වුණා. නැවත try කරන්න.");
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Place Order';
+  }
+};
+
+function openCart() {
+  document.getElementById('cartModal').classList.add('open');
+  document.getElementById('cartOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeCart() {
+  document.getElementById('cartModal').classList.remove('open');
+  document.getElementById('cartOverlay').classList.remove('open');
+  if (!document.getElementById('formOverlay').classList.contains('show')) {
+    document.body.style.overflow = '';
+  }
+}
+
+let toastTimer;
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2200);
+}
+
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+  const target = document.getElementById(id);
+  if (target) target.classList.add('active');
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.classList.remove('active');
+    if (link.dataset.target === id) link.classList.add('active');
+  });
+  document.querySelector('.nav-right').classList.remove('show');
+  document.getElementById('productDropdown').classList.remove('open');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.querySelectorAll('.nav-link').forEach(link => {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = this.dataset.target;
+    if (target) showSection(target);
+  });
+});
+
+function toggleDropdown(e) {
+  e.preventDefault();
+  document.getElementById('productDropdown').classList.toggle('open');
+}
+
+document.addEventListener('click', function(e) {
+  const dropdown = document.getElementById('productDropdown');
+  if (!dropdown.contains(e.target)) dropdown.classList.remove('open');
+});
+
+/* ============================================================
+   CHATBOT
+   ============================================================ */
+let chatOpen = false;
+let chatInitialized = false;
+
+function toggleChat() {
+  chatOpen = !chatOpen;
+  const win = document.getElementById('chatWindow');
+  const toggle = document.getElementById('chatToggle');
+  if (chatOpen) {
+    win.classList.add('open');
+    toggle.classList.add('open');
+    if (!chatInitialized) {
+      chatInitialized = true;
+      setTimeout(() => {
+        botReply('ආයුබෝවන්! 👋 මම TS Assistant. මම ඔබට උදව් කරන්න පුළුවන්:<br><br>• හැම product එකකම නම සහ මිල<br>• Categories ගැන විස්තර<br>• Order කරන ආකාරය<br>• Delivery & Warranty<br><br>Product නම ලියන්න - මම එකේ මිල කියන්නම්! 😊');
+      }, 300);
+    }
+  } else {
+    win.classList.remove('open');
+    toggle.classList.remove('open');
+  }
+}
+
+function addMessage(text, sender) {
+  const container = document.getElementById('chatMessages');
+  const msg = document.createElement('div');
+  msg.className = 'chat-msg ' + sender;
+  msg.innerHTML = text;
+  container.appendChild(msg);
+  container.scrollTop = container.scrollHeight;
+}
+
+function botReply(html) {
+  const container = document.getElementById('chatMessages');
+  const typing = document.createElement('div');
+  typing.className = 'chat-msg bot';
+  typing.id = 'typingIndicator';
+  typing.innerHTML = '<div class="typing-dots"><span></span><span></span><span></span></div>';
+  container.appendChild(typing);
+  container.scrollTop = container.scrollHeight;
+  setTimeout(() => {
+    const t = document.getElementById('typingIndicator');
+    if (t) t.remove();
+    addMessage(html, 'bot');
+  }, 700);
+}
+
+function quickAsk(q) {
+  document.getElementById('chatInput').value = q;
+  sendChat();
+}
+
+function sendChat() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  addMessage(text, 'user');
+  input.value = '';
+  setTimeout(() => {
+    const reply = getBotReply(text.toLowerCase());
+    botReply(reply);
+  }, 400);
+}
+
+function getAllProducts() {
+  const all = [];
+  Object.keys(products).forEach(cat => {
+    products[cat].forEach(p => all.push({ ...p, category: cat }));
+  });
+  return all;
+}
+
+function findProducts(query) {
+  const all = getAllProducts();
+  const q = query.toLowerCase().replace(/[^\w\s\u0D80-\u0DFF]/g, ' ');
+  const qWords = q.split(/\s+/).filter(w => w.length > 1);
+  if (qWords.length === 0) return [];
+  const matches = [];
+  all.forEach(p => {
+    const pName = p.name.toLowerCase();
+    const pWords = pName.split(/[\s\-\(\)]+/).filter(w => w.length > 1);
+    let matchCount = 0;
+    qWords.forEach(qw => {
+      if (pName.includes(qw)) matchCount++;
+      else if (pWords.some(pw => pw.includes(qw) || qw.includes(pw))) matchCount += 0.7;
+    });
+    if (matchCount > 0) matches.push({ ...p, score: matchCount });
+  });
+  matches.sort((a, b) => b.score - a.score);
+  return matches;
+}
+
+function getBotReply(q) {
+  const wa = WHATSAPP_NUMBER;
+  const allProducts = getAllProducts();
+
+  if (/(හෙලෝ|හලෝ|ආයුබෝ|hi|hello|hey|සුබ|කොහොමද)/.test(q)) {
+    return 'ආයුබෝවන්! 👋 මම TS Assistant. මට ඔබට උදව් කරන්න පුළුවන්:<br><br>• Product නම ලියන්න → මිල කියන්නම්<br>• "Casing prices" → Category එකේ හැම එකක්ම<br>• "Order කරන්නේ කොහොමද?" → Order විස්තර<br><br>මොනවද දැනගන්න ඕන? 😊';
+  }
+
+  if (/(ස්තූති|තැන්ක්|thank|thanks|ස්තුති|බොහොම)/.test(q)) {
+    return 'සතුටින්! 😊 තව යමක් දැනගන්න ඕන නම් අහන්න. TS COMPUTER WORLD එකට ස්තූතියි! 🙏';
+  }
+
+  if (/(order|ඕඩර්|ගන්න|මිලදී|buy|purchase|විකුණ|ඕඩර් කරන්න)/.test(q)) {
+    return `Order කරන්න පුළුවන් ක්‍රම 2ක්:<br><br>1️⃣ <strong>ADD</strong> ඔබලා cart එකට add කරලා <strong>PLACE ORDER</strong> ඔබන්න. එතකොට ඔබේ නම, phone, address අහනවා.<br><br>2️⃣ හැම product එකකම <strong>ORDER</strong> බොත්තම ඔබලා කෙලින්ම order කරන්න.<br><br>අපි ඉක්මනින් ඔබව සම්බන්ධ කරගන්නම්! 😊`;
+  }
+
+  if (/(delivery|බෙදාහැරීම|ගෙන්ව|ලබාගන්න|ගෙන්න|ship|ගෙනත්)/.test(q)) {
+    return `🚚 Delivery විස්තර:<br><br>• දිවයින පුරා delivery<br>• Colombo අවට 1-2 දින<br>• අනෙක් ප්‍රදේශවලට 2-4 දින<br>• Delivery charges ප්‍රදේශය අනුව`;
+  }
+
+  if (/(payment|ගෙවීම|ගෙවන|ගෙවන්න|cash|card|bank)/.test(q)) {
+    return `💳 Payment ක්‍රම:<br><br>• Cash on Delivery<br>• Bank Transfer<br>• Online Payment`;
+  }
+
+  if (/(warranty|වොරන්ටි|වගකීම|ගැරන්ටි)/.test(q)) {
+    return `🛡️ Warranty:<br><br>• සියලුම products වලට manufacturer warranty<br>• කාලය: මාස 6-24 (product එක අනුව)`;
+  }
+
+  if (/(location|කොහෙද|ලිපිනය|address|contact|අමතන්න|number|දුරකථන|phone|සම්බන්ධ)/.test(q)) {
+    return `📍 සම්බන්ධ කරගන්න:<br><br>📱 WhatsApp: ${wa}<br>🏪 TS COMPUTER WORLD<br><br><a class="wa-link" href="https://wa.me/${wa}" target="_blank">📱 WhatsApp කරන්න</a>`;
+  }
+
+  if (/(help|උදව්|උදවු|මට උදව්|මොනවද කරන්න පුළුවන්)/.test(q)) {
+    return 'මට උදව් කරන්න පුළුවන්:<br><br>• "GTA SA මිල කීයද?"<br>• "Casing prices කීයද?"<br>• "Monitors මොනවද තියෙන්නේ?"<br>• "Order කරන්නේ කොහොමද?"<br>• "Delivery ගැන කියන්න"<br>• "Warranty තියෙනවද?"<br>• "1000ට අඩු products"<br>• "හැම product එකක්ම පෙන්නන්න"<br><br>මොනවද දැනගන්න ඕන? 😊';
+  }
+
+  if (/(about|ගැන|කවුද|who|මොකද කරන්නේ|සමාගම)/.test(q)) {
+    return `🏪 <strong>TS COMPUTER WORLD</strong> ගැන:<br><br>අපි high-performance gaming PCs සහ top-quality computer components විකුණන සමාගමක්.<br><br>• Gaming PC Builds<br>• PC Components<br>• Gaming Accessories<br>• Games<br><br>තව දැනගන්න ඕනද? 😊`;
+  }
+
+  if (/(හැම product|සියලු product|all product|හැම එකක්ම|list|ලිස්ට්|categories|මොනවද තියෙන්නේ)/.test(q)) {
+    let list = '🛒 අපගේ Products (Category අනුව):<br><br>';
+    Object.keys(products).forEach(cat => {
+      list += `• <strong>${categoryNames[cat]}</strong> - ${products[cat].length} items<br>`;
+    });
+    list += `<br>Category එකේ නම ලියන්න - හැම item එකක්ම මිල සමඟ පෙන්නන්නම්! 😊`;
+    return list;
+  }
+
+  if (/(cheap|ලාභ|අඩු මිල|budget|ලාභම|මිල අඩු|අඩුම මිල)/.test(q)) {
+    let cheapest = allProducts[0];
+    allProducts.forEach(p => { if (p.price < cheapest.price) cheapest = p; });
+    return `💰 අපේ ලාභම product එක:<br><br><div class="item-list"><div><strong>${cheapest.name}</strong></div><div>💰 මිල: <strong>Rs. ${cheapest.price.toLocaleString()}</strong></div><div>📂 ${categoryNames[cheapest.category]}</div></div>`;
+  }
+
+  if (/(expensive|මිල අධික|premium|වැඩිම|best|හොඳම)/.test(q)) {
+    let exp = allProducts[0];
+    allProducts.forEach(p => { if (p.price > exp.price) exp = p; });
+    return `⭐ අපේ premiumම product එක:<br><br><div class="item-list"><div><strong>${exp.name}</strong></div><div>💰 මිල: <strong>Rs. ${exp.price.toLocaleString()}</strong></div><div>📂 ${categoryNames[exp.category]}</div></div>`;
+  }
+
+  const rangePatterns = [/(\d+)\s*ට\s*අඩු/, /under\s*(\d+)/, /below\s*(\d+)/, /less than\s*(\d+)/];
+  for (const pat of rangePatterns) {
+    const m = q.match(pat);
+    if (m) {
+      const max = parseInt(m[1]);
+      const filtered = allProducts.filter(p => p.price < max).sort((a, b) => a.price - b.price);
+      if (filtered.length === 0) return `Rs. ${max.toLocaleString()}ට අඩු products නැහැ. 😔`;
+      let reply = `💰 <strong>Rs. ${max.toLocaleString()}ට අඩු products</strong> (${filtered.length} items):<br><br><div class="item-list">`;
+      filtered.slice(0, 15).forEach(p => {
+        reply += `<div>• <strong>${p.name}</strong> - Rs. ${p.price.toLocaleString()}</div>`;
+      });
+      if (filtered.length > 15) reply += `<div>... තව ${filtered.length - 15} items</div>`;
+      reply += `</div>`;
+      return reply;
+    }
+  }
+
+  const categoryKeywords = {
+    casing: /(casing|කේස්|case)/,
+    monitors: /(monitor|මොනිටර්|display|තිරය)/,
+    processor: /(processor|ප්‍රොසෙසර්|cpu|intel|amd|ryzen)/,
+    motherboard: /(motherboard|මව් බෝඩ්|mobo)/,
+    "cpu-cooler": /(cooler|කූලර්|කූලිං|cooling)/,
+    "rgb-fans": /(fan|ෆෑන්|rgb fan|fans)/,
+    ram: /(ram|මතකය|memory|ddr)/,
+    ssd: /(ssd|ස්ටෝරේජ්|storage|nvme)/,
+    hdd: /(hdd|hard|හාඩ්)/,
+    keyboard: /(keyboard|යතුරු|කීබෝඩ්)/,
+    mouse: /(mouse|මවුස්|mice)/,
+    headset: /(headset|හෙඩ්සෙට්|headphone)/,
+    games: /(game|ගේම්|games)/,
+  };
+
+  for (const cat in categoryKeywords) {
+    if (categoryKeywords[cat].test(q)) return getCategoryReply(cat, q);
+  }
+
+  const found = findProducts(q);
+  if (found.length > 0) {
+    if (found.length === 1) {
+      const p = found[0];
+      return `📦 <strong>${p.name}</strong><br><br><div class="item-list"><div>💰 මිල: <strong>Rs. ${p.price.toLocaleString()}</strong></div><div>📂 Category: ${categoryNames[p.category]}</div></div>`;
+    } else {
+      let reply = `🔍 <strong>ඔබ හෙව්ව product ${found.length}ක් හමු වුණා:</strong><br><br><div class="item-list">`;
+      found.slice(0, 8).forEach(p => {
+        reply += `<div>• <strong>${p.name}</strong><br>&nbsp;&nbsp;💰 Rs. ${p.price.toLocaleString()} <em>(${categoryNames[p.category]})</em></div>`;
+      });
+      reply += `</div>`;
+      return reply;
+    }
+  }
+
+  return `මට "${q}" කියන එක තේරුණේ නැහැ. 😅<br><br>මට උදව් කරන්න පුළුවන්:<br>• Product නම ලියන්න<br>• Category නම ලියන්න<br>• "Order කරන්නේ කොහොමද?"<br>• "Delivery ගැන කියන්න"<br>• "5000ට අඩු products"<br><br>නැත්නම් WhatsApp කරන්න:<br><a class="wa-link" href="https://wa.me/${wa}" target="_blank">📱 ${wa}</a>`;
+}
+
+function getCategoryReply(cat, q) {
+  const list = products[cat];
+  const catName = categoryNames[cat];
+  const found = findProducts(q).filter(p => p.category === cat);
+  if (found.length === 1) {
+    const p = found[0];
+    return `📦 <strong>${p.name}</strong><br><br><div class="item-list"><div>💰 මිල: <strong>Rs. ${p.price.toLocaleString()}</strong></div><div>📂 ${catName}</div></div>`;
+  }
+  let reply = `📂 <strong>${catName}</strong> - ${list.length} items:<br><br><div class="item-list">`;
+  list.forEach((p, i) => {
+    reply += `<div>${i + 1}. <strong>${p.name}</strong><br>&nbsp;&nbsp;&nbsp;💰 Rs. ${p.price.toLocaleString()}</div>`;
+  });
+  reply += `</div>`;
+  return reply;
+}
+
+showSection('home');
+renderCart();
+</script>
+
+</body>
+</html>
