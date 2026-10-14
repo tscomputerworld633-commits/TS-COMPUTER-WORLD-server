@@ -4,10 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Panel — TS COMPUTER WORLD</title>
+
+<!-- ===== FAVICON ===== -->
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="logo.png">
+
+<!-- ===== EMAILJS SDK ===== -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
 <style>
   * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Arial, sans-serif; -webkit-tap-highlight-color:transparent; }
   body { background:#080808; color:#fff; padding:15px; min-height:100vh; }
-  
+
+  /* ---------- LOGIN ---------- */
   .login-wrapper { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
   .login-box {
     max-width:420px; width:100%; padding:45px 35px;
@@ -17,7 +27,23 @@
     animation:loginFade 0.6s ease;
   }
   @keyframes loginFade { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-  .login-icon { font-size:3rem; margin-bottom:15px; filter:drop-shadow(0 0 15px #007bff); }
+
+  .login-logo {
+    width:90px; height:90px; margin:0 auto 20px;
+    border-radius:50%; overflow:hidden;
+    border:3px solid #007bff;
+    box-shadow:0 0 30px rgba(0,123,255,0.6);
+    background:#000;
+    display:flex; align-items:center; justify-content:center;
+    animation:logoPulse 2s infinite;
+  }
+  @keyframes logoPulse {
+    0%,100% { box-shadow:0 0 30px rgba(0,123,255,0.6); }
+    50% { box-shadow:0 0 50px rgba(0,123,255,1); }
+  }
+  .login-logo img { width:100%; height:100%; object-fit:cover; }
+  .login-logo .fallback-icon { font-size:2.5rem; filter:drop-shadow(0 0 15px #007bff); }
+
   .login-box h2 {
     background:linear-gradient(135deg, #007bff, #00d4ff);
     -webkit-background-clip:text; -webkit-text-fill-color:transparent;
@@ -26,8 +52,8 @@
   .login-box .subtitle { color:#666; font-size:0.85rem; margin-bottom:30px; letter-spacing:1px; }
   .login-box input {
     width:100%; padding:15px; background:#000; border:2px solid #333;
-    color:#fff; border-radius:12px; font-size:1rem; margin-bottom:18px;
-    outline:none; text-align:center; letter-spacing:3px;
+    color:#fff; border-radius:12px; font-size:1rem; margin-bottom:14px;
+    outline:none; text-align:center; letter-spacing:2px;
     transition:0.3s; font-family:inherit;
   }
   .login-box input:focus { border-color:#007bff; box-shadow:0 0 20px rgba(0,123,255,0.4); }
@@ -42,16 +68,34 @@
   .login-box button:hover { transform:translateY(-2px); box-shadow:0 12px 35px rgba(0,123,255,0.7); }
   .login-error { color:#ff3b3b; font-size:0.9rem; margin-top:15px; min-height:22px; font-weight:600; }
 
+  /* ---------- HEADER ---------- */
   .header {
     display:flex; justify-content:space-between; align-items:center;
-    padding:20px 25px;
+    padding:15px 25px;
     background:linear-gradient(90deg, #000, #0a1929);
     border:2px solid #007bff; border-radius:15px;
     margin-bottom:20px; flex-wrap:wrap; gap:15px;
     box-shadow:0 8px 30px rgba(0,123,255,0.3);
   }
-  .header h1 { color:#fff; font-size:1.3rem; letter-spacing:1px; display:flex; align-items:center; gap:10px; }
-  .header h1::before { content:''; width:10px; height:10px; border-radius:50%; background:#007bff; box-shadow:0 0 12px #007bff; }
+  .header-left { display:flex; align-items:center; gap:14px; }
+
+  .header-logo {
+    width:52px; height:52px; border-radius:50%;
+    border:2px solid #007bff;
+    box-shadow:0 0 20px rgba(0,123,255,0.6);
+    background:#000;
+    display:flex; align-items:center; justify-content:center;
+    overflow:hidden; flex-shrink:0;
+    transition:0.3s;
+  }
+  .header-logo:hover { transform:scale(1.08); box-shadow:0 0 30px rgba(0,123,255,1); }
+  .header-logo img { width:100%; height:100%; object-fit:cover; }
+  .header-logo .fallback-icon { font-size:1.6rem; filter:drop-shadow(0 0 10px #007bff); }
+
+  .header h1 {
+    color:#fff; font-size:1.3rem; letter-spacing:1px;
+    display:flex; align-items:center; gap:10px;
+  }
   .header h1 span { background:linear-gradient(135deg, #007bff, #00d4ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
   .header-actions { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
   .btn {
@@ -78,6 +122,7 @@
   }
   @keyframes pulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.4; transform:scale(1.3); } }
 
+  /* ---------- STATS ---------- */
   .stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:15px; margin-bottom:25px; }
   .stat-card {
     background:linear-gradient(145deg, #111, #0a0a0a);
@@ -102,6 +147,7 @@
   }
   .stat-card .label { font-size:0.72rem; color:#888; margin-top:6px; text-transform:uppercase; letter-spacing:1.5px; font-weight:600; }
 
+  /* ---------- SEARCH & FILTERS ---------- */
   .search-box {
     width:100%; padding:14px 22px;
     background:linear-gradient(145deg, #111, #0a0a0a);
@@ -121,11 +167,23 @@
   }
   .filter-btn.active, .filter-btn:hover { background:#007bff; color:#fff; box-shadow:0 6px 20px rgba(0,123,255,0.5); }
 
+  /* ---------- ORDER CARDS ---------- */
   .orders-container { display:grid; gap:18px; }
   .order-card {
     background:linear-gradient(145deg, #111, #0a0a0a);
     border:2px solid rgba(0,123,255,0.4);
     border-radius:15px; overflow:hidden; transition:0.3s;
+    animation:cardIn 0.5s ease;
+  }
+  @keyframes cardIn { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+  .order-card.new-order {
+    border-color:#25D366;
+    box-shadow:0 0 30px rgba(37,211,102,0.5);
+    animation:newPulse 2s ease;
+  }
+  @keyframes newPulse {
+    0%,100% { box-shadow:0 0 30px rgba(37,211,102,0.5); }
+    50% { box-shadow:0 0 50px rgba(37,211,102,0.9); }
   }
   .order-card:hover { border-color:#007bff; box-shadow:0 10px 40px rgba(0,123,255,0.4); transform:translateY(-3px); }
   .order-header {
@@ -156,6 +214,7 @@
   }
   .info-item label { color:#666; font-size:0.7rem; text-transform:uppercase; display:block; margin-bottom:6px; letter-spacing:1px; font-weight:700; }
   .info-item .value { color:#fff; font-weight:600; font-size:0.95rem; word-break:break-word; line-height:1.5; }
+  .info-item .value.email-value { color:#00d4ff; }
 
   .items-list { margin-bottom:15px; }
   .items-list h3 { color:#00d4ff; font-size:0.82rem; margin-bottom:12px; text-transform:uppercase; letter-spacing:1.5px; font-weight:700; }
@@ -168,6 +227,7 @@
     gap:10px; white-space:pre-wrap; word-break:break-word;
   }
   .order-item-name { flex:1; color:#ddd; }
+  .order-item-qty { color:#00d4ff; font-weight:700; white-space:nowrap; }
 
   .order-total {
     display:flex; justify-content:space-between; align-items:center;
@@ -199,6 +259,8 @@
   }
   .btn-confirm { background:transparent; border-color:#007bff; color:#007bff; }
   .btn-confirm:hover { background:#007bff; color:#fff; box-shadow:0 6px 20px rgba(0,123,255,0.5); }
+  .btn-confirm:disabled { opacity:0.5; cursor:not-allowed; }
+  .btn-confirm.sending { background:#ffa500; border-color:#ffa500; color:#000; }
   .btn-deliver { background:transparent; border-color:#25D366; color:#25D366; }
   .btn-deliver:hover { background:#25D366; color:#fff; box-shadow:0 6px 20px rgba(37,211,102,0.5); }
   .btn-cancel { background:transparent; border-color:#ff3b3b; color:#ff3b3b; }
@@ -231,10 +293,25 @@
   }
   .back-store:hover { transform:translateY(-3px); box-shadow:0 12px 40px rgba(0,123,255,0.9); }
 
+  /* Toast */
+  .toast {
+    position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(100px);
+    background:#25D366; color:#fff; padding:14px 24px; border-radius:30px;
+    font-weight:700; box-shadow:0 0 25px #25D366; z-index:99999;
+    opacity:0; transition:0.4s; pointer-events:none; max-width:90%;
+    text-align:center;
+  }
+  .toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+  .toast.error { background:#ff3b3b; box-shadow:0 0 25px #ff3b3b; }
+  .toast.info { background:#007bff; box-shadow:0 0 25px #007bff; }
+
   @media (max-width: 600px) {
     body { padding:10px; }
     .header { padding:15px; }
-    .header h1 { font-size:1rem; }
+    .header h1 { font-size:0.95rem; }
+    .header-logo { width:44px; height:44px; }
+    .header-left { gap:10px; }
+    .login-logo { width:75px; height:75px; }
     .order-header { padding:14px 16px; }
     .order-body { padding:16px; }
     .order-actions { padding:14px 16px; }
@@ -249,24 +326,36 @@
 </head>
 <body>
 
+<!-- ===== LOGIN SCREEN ===== -->
 <div id="loginScreen" class="login-wrapper">
   <div class="login-box">
-    <div class="login-icon">🔐</div>
+    <div class="login-logo">
+      <img src="logo.png" alt="TS COMPUTER WORLD Logo"
+           onerror="this.style.display='none'; this.parentElement.innerHTML='&lt;div class=&quot;fallback-icon&quot;&gt;🔐&lt;/div&gt;';">
+    </div>
     <h2>ADMIN PANEL</h2>
     <p class="subtitle">TS COMPUTER WORLD</p>
-    <input type="password" id="passwordInput" placeholder="ENTER PASSWORD"
+    <input type="text" id="usernameInput" placeholder="USERNAME" autocomplete="off">
+    <input type="password" id="passwordInput" placeholder="PASSWORD"
            onkeypress="if(event.key==='Enter') doLogin()" autocomplete="off">
     <button onclick="doLogin()">LOGIN</button>
     <div class="login-error" id="loginError"></div>
   </div>
 </div>
 
+<!-- ===== ADMIN PANEL ===== -->
 <div id="adminPanel" style="display:none;">
   <div class="header">
-    <h1>TS <span>COMPUTER WORLD</span> — ADMIN</h1>
+    <div class="header-left">
+      <div class="header-logo">
+        <img src="logo.png" alt="TS Logo"
+             onerror="this.style.display='none'; this.parentElement.innerHTML='&lt;div class=&quot;fallback-icon&quot;&gt;💻&lt;/div&gt;';">
+      </div>
+      <h1>TS <span>COMPUTER WORLD</span> — ADMIN</h1>
+    </div>
     <div class="header-actions">
       <span class="live-badge">LIVE</span>
-      <button class="btn" onclick="loadOrders()">🔄 Refresh</button>
+      <button class="btn" onclick="manualReload()">🔄 Refresh</button>
       <button class="btn btn-danger" onclick="doLogout()">Logout</button>
     </div>
   </div>
@@ -280,7 +369,7 @@
   </div>
 
   <input type="text" class="search-box" id="searchBox"
-         placeholder="🔍 Search by Order ID, Name, or Phone..."
+         placeholder="🔍 Search by Customer Name, Phone, or Email..."
          oninput="renderOrders()">
 
   <div class="filters">
@@ -296,33 +385,83 @@
   </div>
 </div>
 
-<a href="https://tscomputerworld633-commits.github.io/TS-COMPUTER-WORLD/" 
+<a href="https://tscomputerworld633-commits.github.io/TS-COMPUTER-WORLD/"
    class="back-store" target="_blank">
   🛒 VIEW STORE
 </a>
 
+<div class="toast" id="toast">Done!</div>
+
+<!-- ===== EMAILJS INITIALIZE ===== -->
+<script>
+  // 🔥 EmailJS initialize — Public Key එක මෙතන
+  (function() {
+    if (typeof emailjs !== 'undefined') {
+      emailjs.init("Qmo1FUi5qr3NcULCC");
+      console.log('✅ EmailJS initialized');
+    }
+  })();
+</script>
+
+<!-- ===== FIREBASE SDK ===== -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getDatabase, ref, onValue, update, remove }
+    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAAj5U6C0DeqM0btlYw_QmkGHhPfg_ifgo",
+    authDomain: "ts-computer-world-32c3a.firebaseapp.com",
+    databaseURL: "https://ts-computer-world-32c3a-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "ts-computer-world-32c3a",
+    storageBucket: "ts-computer-world-32c3a.firebasestorage.app",
+    messagingSenderId: "31780896771",
+    appId: "1:31780896771:web:2a23f1febbee9cfa874e36"
+  };
+
+  const fbApp = initializeApp(firebaseConfig);
+  const db = getDatabase(fbApp);
+
+  window.fbDB = db;
+  window.fbRef = ref;
+  window.fbOnValue = onValue;
+  window.fbUpdate = update;
+  window.fbRemove = remove;
+  window.firebaseReady = true;
+
+  console.log('✅ Firebase initialized');
+</script>
+
+<!-- ===== MAIN SCRIPT ===== -->
 <script>
 /* ============================================================
-   ⚙️ CONFIG — මේ දෙක විතරයි වෙනස් කරන්න ඕන
+   ⚙️ CONFIG
    ============================================================ */
+const ADMIN_USERNAME = "TS COMPUTER WORLD";
+const ADMIN_PASSWORD = "tscomputerworld";
 
-// ⬇️ ඔබේ Google Apps Script URL එක මෙතන paste කරන්න
-// (customer website එකේ දාපු එකම URL එක)
-const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbx.../exec";
+// 🔥 EMAILJS CONFIG
+const EMAILJS_SERVICE_ID  = "service_dp85zyq";
+const EMAILJS_TEMPLATE_ID = "template_ysahcej";
+const EMAILJS_PUBLIC_KEY  = "Qmo1FUi5qr3NcULCC";
 
-// ⬇️ Admin password එක මෙතන වෙනස් කරන්න
-const ADMIN_PASSWORD = "tsadmin2025";
-
-let allOrders = [];
+let allOrders = {};
 let currentFilter = 'all';
+let firstLoad = true;
+let knownOrderIds = new Set();
 
+/* ============================================================
+   LOGIN / LOGOUT
+   ============================================================ */
 function doLogin() {
+  const user = document.getElementById('usernameInput').value.trim();
   const pass = document.getElementById('passwordInput').value;
-  if (pass === ADMIN_PASSWORD) {
+
+  if (user === ADMIN_USERNAME && pass === ADMIN_PASSWORD) {
     sessionStorage.setItem('tsAdminAuth', 'yes');
     showAdminPanel();
   } else {
-    document.getElementById('loginError').textContent = "❌ වැරදි password එකක්!";
+    document.getElementById('loginError').textContent = "❌ වැරදි username හෝ password!";
     document.getElementById('passwordInput').value = '';
     document.getElementById('passwordInput').focus();
   }
@@ -337,34 +476,56 @@ function doLogout() {
 function showAdminPanel() {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('adminPanel').style.display = 'block';
-  loadOrders();
-  setInterval(loadOrders, 30000);
+  listenToOrders();
 }
 
-async function loadOrders() {
-  const container = document.getElementById('ordersContainer');
-  if (!container) return;
-  
-  if (SHEET_API_URL.includes("AKfycbx...")) {
-    container.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><h2>Setup Required</h2><p>Admin code එකේ SHEET_API_URL එකට ඔබේ Google Apps Script URL එක paste කරන්න.</p></div>`;
+/* ============================================================
+   REAL-TIME FIREBASE LISTENER
+   ============================================================ */
+async function listenToOrders() {
+  let tries = 0;
+  while (!window.firebaseReady && tries < 30) {
+    await new Promise(r => setTimeout(r, 100));
+    tries++;
+  }
+  if (!window.firebaseReady) {
+    document.getElementById('ordersContainer').innerHTML =
+      '<div class="empty-state"><div class="icon">❌</div><h2>Firebase Error</h2><p>Config එක check කරන්න</p></div>';
     return;
   }
-  
-  try {
-    const res = await fetch(SHEET_API_URL, { method: 'GET' });
-    const data = await res.json();
-    if (data.success) {
-      allOrders = data.orders.reverse().filter(o => o.orderId);
-      renderOrders();
-    } else {
-      container.innerHTML = `<div class="empty-state"><div class="icon">❌</div><h2>Error</h2><p>${data.error || 'Unknown error'}</p></div>`;
+
+  const ordersRef = window.fbRef(window.fbDB, 'orders');
+  window.fbOnValue(ordersRef, (snapshot) => {
+    const data = snapshot.val() || {};
+    allOrders = data;
+
+    if (!firstLoad) {
+      const newIds = Object.keys(data);
+      newIds.forEach(id => {
+        if (!knownOrderIds.has(id)) {
+          showToast('🔔 NEW ORDER එකක් ලැබුණා!');
+          try { new Audio('data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQBvT18AAAA=').play().catch(()=>{}); } catch(e){}
+        }
+      });
     }
-  } catch (err) {
-    console.error(err);
-    container.innerHTML = `<div class="empty-state"><div class="icon">❌</div><h2>Network Error</h2><p>${err.message}</p><p style="margin-top:10px;font-size:0.85rem;">SHEET_API_URL එක check කරන්න</p></div>`;
-  }
+    knownOrderIds = new Set(Object.keys(data));
+    firstLoad = false;
+    renderOrders();
+  }, (error) => {
+    console.error(error);
+    document.getElementById('ordersContainer').innerHTML =
+      `<div class="empty-state"><div class="icon">❌</div><h2>Database Error</h2><p>${error.message}</p></div>`;
+  });
 }
 
+function manualReload() {
+  showToast('🔄 Refreshed!', 'info');
+  renderOrders();
+}
+
+/* ============================================================
+   FILTER
+   ============================================================ */
 function setFilter(filter) {
   currentFilter = filter;
   document.querySelectorAll('.filter-btn').forEach(b => {
@@ -373,84 +534,105 @@ function setFilter(filter) {
   renderOrders();
 }
 
+/* ============================================================
+   RENDER ORDERS
+   ============================================================ */
 function renderOrders() {
   const container = document.getElementById('ordersContainer');
   const searchTerm = (document.getElementById('searchBox').value || '').toLowerCase().trim();
-  
-  const total = allOrders.length;
-  const pending = allOrders.filter(o => o.status === 'pending').length;
-  const confirmed = allOrders.filter(o => o.status === 'confirmed').length;
-  const delivered = allOrders.filter(o => o.status === 'delivered').length;
-  const revenue = allOrders.filter(o => o.status !== 'cancelled').reduce((sum, o) => sum + (Number(o.total) || 0), 0);
-  
+
+  let ordersArr = Object.keys(allOrders).map(id => ({
+    id,
+    ...allOrders[id]
+  }));
+
+  ordersArr.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+  const total = ordersArr.length;
+  const pending = ordersArr.filter(o => o.status === 'pending').length;
+  const confirmed = ordersArr.filter(o => o.status === 'confirmed').length;
+  const delivered = ordersArr.filter(o => o.status === 'delivered').length;
+  const revenue = ordersArr
+    .filter(o => o.status !== 'cancelled')
+    .reduce((sum, o) => sum + (Number(o.total) || 0), 0);
+
   document.getElementById('statTotal').textContent = total;
   document.getElementById('statPending').textContent = pending;
   document.getElementById('statConfirmed').textContent = confirmed;
   document.getElementById('statDelivered').textContent = delivered;
   document.getElementById('statRevenue').textContent = 'Rs.' + revenue.toLocaleString();
-  
-  let orders = allOrders;
-  if (currentFilter !== 'all') orders = orders.filter(o => o.status === currentFilter);
+
+  let filtered = ordersArr;
+  if (currentFilter !== 'all') filtered = filtered.filter(o => o.status === currentFilter);
   if (searchTerm) {
-    orders = orders.filter(o => 
-      (o.orderId || '').toLowerCase().includes(searchTerm) ||
-      (o.customerName || '').toLowerCase().includes(searchTerm) ||
-      (o.customerPhone || '').toLowerCase().includes(searchTerm)
-    );
+    filtered = filtered.filter(o => {
+      const name = (o.customer?.name || '').toLowerCase();
+      const phone = (o.customer?.phone || '').toLowerCase();
+      const email = (o.customer?.email || '').toLowerCase();
+      return name.includes(searchTerm) || phone.includes(searchTerm) || email.includes(searchTerm);
+    });
   }
-  
-  if (orders.length === 0) {
+
+  if (filtered.length === 0) {
     container.innerHTML = `
       <div class="empty-state">
         <div class="icon">📭</div>
         <h2>Orders නැහැ</h2>
-        <p>${searchTerm ? `"${searchTerm}" සඳහා orders නැහැ.` : 
-            currentFilter === 'all' ? 'තවම order එකක් ලැබිලා නැහැ.' : 
+        <p>${searchTerm ? `"${searchTerm}" සඳහා orders නැහැ.` :
+            currentFilter === 'all' ? 'තවම order එකක් ලැබිලා නැහැ.' :
             `"${currentFilter}" orders නැහැ.`}</p>
       </div>`;
     return;
   }
-  
+
   let html = '';
-  orders.forEach(order => {
-    const orderId = order.orderId || 'N/A';
+  filtered.forEach(order => {
     const status = (order.status || 'pending').toLowerCase();
-    const customerName = order.customerName || 'N/A';
-    const customerPhone = order.customerPhone || 'N/A';
-    const customerAddress = order.customerAddress || 'N/A';
-    const items = order.items || '';
+    const customer = order.customer || {};
+    const items = Array.isArray(order.items) ? order.items : [];
     const total = Number(order.total) || 0;
-    const date = order.date || 'N/A';
-    
-    const itemsHtml = items.split('\n').filter(i => i.trim()).map(line => 
-      `<div class="order-item"><span class="order-item-name">${line}</span></div>`
-    ).join('');
-    
-    const cleanPhone = customerPhone.replace(/\D/g, '');
-    const waMessage = encodeURIComponent(
-      `ආයුබෝවන් ${customerName}! 🙏\n\n` +
-      `ඔබේ Order ${orderId} එක ගැන සම්බන්ධ වෙනවා.\n` +
+    const createdAt = order.createdAt ? new Date(order.createdAt) : null;
+    const date = createdAt ? createdAt.toLocaleString('en-GB', {
+      day: '2-digit', month: 'short', year: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    }) : 'N/A';
+
+    const itemsHtml = items.map(it => `
+      <div class="order-item">
+        <span class="order-item-name">${it.name || 'Unknown'}</span>
+        <span class="order-item-qty">× ${it.qty || 1} — Rs. ${((it.price || 0) * (it.qty || 1)).toLocaleString()}</span>
+      </div>
+    `).join('');
+
+    const cleanPhone = (customer.phone || '').replace(/\D/g, '');
+    const waMsg = encodeURIComponent(
+      `ආයුබෝවන් ${customer.name || ''}! 🙏\n\n` +
+      `ඔබේ Order එක ගැන සම්බන්ධ වෙනවා.\n` +
       `💰 මුළු මුදල: Rs. ${total.toLocaleString()}`
     );
-    const waLink = `https://wa.me/${cleanPhone}?text=${waMessage}`;
-    
+    const waLink = cleanPhone ? `https://wa.me/${cleanPhone}?text=${waMsg}` : '#';
+
+    const isNew = order.createdAt && (Date.now() - order.createdAt < 60000);
+    const hasEmail = customer.email && customer.email.includes('@');
+
     html += `
-      <div class="order-card">
+      <div class="order-card ${isNew ? 'new-order' : ''}">
         <div class="order-header">
           <div>
-            <div class="order-id">📋 ${orderId}</div>
+            <div class="order-id">📋 #${order.id.slice(-6).toUpperCase()}</div>
             <div class="order-date">${date}</div>
           </div>
           <span class="status-badge status-${status}">${status}</span>
         </div>
         <div class="order-body">
           <div class="customer-info">
-            <div class="info-item"><label>👤 Customer</label><div class="value">${customerName}</div></div>
-            <div class="info-item"><label>📞 Phone</label><div class="value">${customerPhone}</div></div>
-            <div class="info-item"><label>📍 Address</label><div class="value">${customerAddress}</div></div>
+            <div class="info-item"><label>👤 Customer</label><div class="value">${customer.name || 'N/A'}</div></div>
+            <div class="info-item"><label>📞 Phone</label><div class="value">${customer.phone || 'N/A'}</div></div>
+            <div class="info-item"><label>📧 Email</label><div class="value email-value">${customer.email || '<span style="color:#ff3b3b">No email</span>'}</div></div>
+            <div class="info-item"><label>📍 Address</label><div class="value">${customer.address || 'N/A'}</div></div>
           </div>
           <div class="items-list">
-            <h3>📦 Items</h3>
+            <h3>📦 Items (${items.length})</h3>
             ${itemsHtml}
           </div>
           <div class="order-total">
@@ -459,50 +641,151 @@ function renderOrders() {
           </div>
         </div>
         <div class="order-actions">
-          ${status === 'pending' ? `<button class="action-btn btn-confirm" onclick="updateStatus('${orderId}', 'confirmed')">✓ Confirm</button>` : ''}
-          ${status === 'confirmed' ? `<button class="action-btn btn-deliver" onclick="updateStatus('${orderId}', 'delivered')">🚚 Delivered</button>` : ''}
-          ${status !== 'cancelled' && status !== 'delivered' ? `<button class="action-btn btn-cancel" onclick="updateStatus('${orderId}', 'cancelled')">✕ Cancel</button>` : ''}
+          ${status === 'pending' ? `<button class="action-btn btn-confirm" id="confirmBtn-${order.id}" onclick="updateStatus('${order.id}', 'confirmed')">✓ Confirm & Send Email</button>` : ''}
+          ${status === 'confirmed' ? `<button class="action-btn btn-deliver" onclick="updateStatus('${order.id}', 'delivered')">🚚 Delivered</button>` : ''}
+          ${status !== 'cancelled' && status !== 'delivered' ? `<button class="action-btn btn-cancel" onclick="updateStatus('${order.id}', 'cancelled')">✕ Cancel</button>` : ''}
           <a class="action-btn btn-whatsapp" href="${waLink}" target="_blank">📱 WhatsApp</a>
-          <button class="action-btn btn-delete" onclick="deleteOrder('${orderId}')">🗑 Delete</button>
+          <button class="action-btn btn-delete" onclick="deleteOrder('${order.id}')">🗑 Delete</button>
         </div>
       </div>`;
   });
   container.innerHTML = html;
 }
 
+/* ============================================================
+   UPDATE STATUS + AUTO EMAIL
+   ============================================================ */
 async function updateStatus(orderId, status) {
-  if (!confirm(`${orderId} එකේ status එක "${status}" කරන්නද?`)) return;
+  if (!confirm(`Status එක "${status}" කරන්නද?`)) return;
+
+  // Confirm කරාම email යවන නිසා special message
+  if (status === 'confirmed') {
+    const order = allOrders[orderId];
+    const customerEmail = order?.customer?.email;
+    if (customerEmail && customerEmail.includes('@')) {
+      const ok = confirm(`✅ Order එක confirm කරලා customer ගේ email (${customerEmail}) එකට auto reply එකක් යවන්නද?`);
+      if (!ok) return;
+    }
+  }
+
+  // Button loading state
+  const btn = document.getElementById('confirmBtn-' + orderId);
+  if (btn && status === 'confirmed') {
+    btn.disabled = true;
+    btn.classList.add('sending');
+    btn.innerHTML = '⏳ Sending...';
+  }
+
   try {
-    await fetch(SHEET_API_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'updateStatus', orderId: orderId, status: status })
-    });
-    const order = allOrders.find(o => o.orderId === orderId);
-    if (order) order.status = status;
-    renderOrders();
+    // 1. Firebase update
+    await window.fbUpdate(window.fbRef(window.fbDB, 'orders/' + orderId), { status });
+
+    // 2. Auto email reply (confirm කරාම විතරයි)
+    if (status === 'confirmed') {
+      const order = allOrders[orderId];
+      if (order) {
+        await sendAutoReplyEmail(order, orderId);
+      }
+    }
+
+    if (btn && status === 'confirmed') {
+      btn.classList.remove('sending');
+      btn.innerHTML = '✅ Confirmed';
+    }
+
+    showToast('✅ Status updated!', 'success');
+
   } catch (err) {
-    alert("Status update කරන්න බැරි වුණා: " + err.message);
+    console.error(err);
+    showToast('❌ Error: ' + err.message, 'error');
+    if (btn && status === 'confirmed') {
+      btn.disabled = false;
+      btn.classList.remove('sending');
+      btn.innerHTML = '✓ Confirm & Send Email';
+    }
   }
 }
 
+/* ============================================================
+   AUTO REPLY EMAIL — Customer ට Email යවනවා
+   ============================================================ */
+async function sendAutoReplyEmail(order, orderId) {
+  const customer = order.customer || {};
+  const email = customer.email;
+
+  // Email නැත්නම් skip කරන්න
+  if (!email || !email.includes('@')) {
+    showToast('⚠️ Customer email එකක් නෑ — Email යවන්න බැහැ', 'error');
+    console.warn('No valid email for order', orderId);
+    return;
+  }
+
+  if (typeof emailjs === 'undefined') {
+    showToast('❌ EmailJS load වෙලා නෑ', 'error');
+    return;
+  }
+
+  const shortId = orderId.slice(-6).toUpperCase();
+  const items = Array.isArray(order.items) ? order.items : [];
+  const orderItems = items.map(i =>
+    `${i.name} × ${i.qty} = Rs. ${((i.price || 0) * (i.qty || 1)).toLocaleString()}`
+  ).join('\n');
+  const total = (order.total || 0).toLocaleString();
+
+  const templateParams = {
+    customer_name: customer.name || 'Customer',
+    customer_email: email,
+    order_id: shortId,
+    order_items: orderItems,
+    order_total: total,
+    customer_phone: customer.phone || '',
+    customer_address: customer.address || '',
+    reply_to: 'tscomputerworld@gmail.com'
+  };
+
+  try {
+    const result = await emailjs.send(
+      EMAILJS_SERVICE_ID,
+      EMAILJS_TEMPLATE_ID,
+      templateParams,
+      EMAILJS_PUBLIC_KEY
+    );
+    console.log('✅ Email sent:', result);
+    showToast('📧 Email එක customer ට යවන ලදී!', 'success');
+  } catch (err) {
+    console.error('❌ Email send error:', err);
+    showToast('❌ Email යවන්න බැරි වුණා: ' + (err.text || err.message || 'Unknown error'), 'error');
+  }
+}
+
+/* ============================================================
+   DELETE ORDER
+   ============================================================ */
 async function deleteOrder(orderId) {
-  if (!confirm(`${orderId} order එක මකන්නද? මේක undo කරන්න බැහැ!`)) return;
+  if (!confirm('මේ order එක මකන්නද? මේක undo කරන්න බැහැ!')) return;
   try {
-    await fetch(SHEET_API_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'deleteOrder', orderId: orderId })
-    });
-    allOrders = allOrders.filter(o => o.orderId !== orderId);
-    renderOrders();
+    await window.fbRemove(window.fbRef(window.fbDB, 'orders/' + orderId));
+    showToast('🗑 Order deleted!', 'success');
   } catch (err) {
-    alert("Delete කරන්න බැරි වුණා: " + err.message);
+    showToast('❌ Error: ' + err.message, 'error');
   }
 }
 
+/* ============================================================
+   TOAST
+   ============================================================ */
+let toastTimer;
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+/* ============================================================
+   AUTO-LOGIN
+   ============================================================ */
 if (sessionStorage.getItem('tsAdminAuth') === 'yes') {
   showAdminPanel();
 }
