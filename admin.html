@@ -50,10 +50,7 @@
     margin-bottom:20px; flex-wrap:wrap; gap:15px;
     box-shadow:0 8px 30px rgba(0,123,255,0.3);
   }
-  .header h1 {
-    color:#fff; font-size:1.3rem; letter-spacing:1px;
-    display:flex; align-items:center; gap:10px;
-  }
+  .header h1 { color:#fff; font-size:1.3rem; letter-spacing:1px; display:flex; align-items:center; gap:10px; }
   .header h1::before { content:''; width:10px; height:10px; border-radius:50%; background:#007bff; box-shadow:0 0 12px #007bff; }
   .header h1 span { background:linear-gradient(135deg, #007bff, #00d4ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
   .header-actions { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
@@ -306,14 +303,15 @@
 
 <script>
 /* ============================================================
-   ⚙️ CONFIG — මේවා වෙනස් කරන්න
+   ⚙️ CONFIG — මේ දෙක විතරයි වෙනස් කරන්න ඕන
    ============================================================ */
 
 // ⬇️ ඔබේ Google Apps Script URL එක මෙතන paste කරන්න
-const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbzzHm3AagVpIibTyCAQZjSdXj9xUQDqKAON72fFJNx8vyQzu79WA_PKSFI0gnblzLiP/exec";
+// (customer website එකේ දාපු එකම URL එක)
+const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbx.../exec";
 
 // ⬇️ Admin password එක මෙතන වෙනස් කරන්න
-const ADMIN_PASSWORD = "Sathini@1205";
+const ADMIN_PASSWORD = "tsadmin2025";
 
 let allOrders = [];
 let currentFilter = 'all';
@@ -346,6 +344,12 @@ function showAdminPanel() {
 async function loadOrders() {
   const container = document.getElementById('ordersContainer');
   if (!container) return;
+  
+  if (SHEET_API_URL.includes("AKfycbx...")) {
+    container.innerHTML = `<div class="empty-state"><div class="icon">⚠️</div><h2>Setup Required</h2><p>Admin code එකේ SHEET_API_URL එකට ඔබේ Google Apps Script URL එක paste කරන්න.</p></div>`;
+    return;
+  }
+  
   try {
     const res = await fetch(SHEET_API_URL, { method: 'GET' });
     const data = await res.json();
