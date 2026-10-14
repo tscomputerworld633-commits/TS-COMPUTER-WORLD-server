@@ -1,0 +1,118 @@
+// ⬇️ මෙතන ඔබේ Apps Script URL එක paste කරන්න
+const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbzzHm3AagVpIibTyCAQZjSdXj9xUQDqKAON72fFJNx8vyQzu79WA_PKSFI0gnblzLiP/exec";
+
+// WhatsApp number (order message එකට ඕන නැහැ දැන්, නමුත් තියෙන්න දෙන්න)
+const WHATSAPP_NUMBER = "94754864672";
+async function checkoutCart() {
+  if (cart.length === 0) return;
+
+  const name = prompt("👤 ඔබේ නම ඇතුළත් කරන්න:");
+  if (!name || !name.trim()) return;
+
+  const phone = prompt("📞 ඔබේ දුරකථන අංකය:");
+  if (!phone || !phone.trim()) return;
+
+  const address = prompt("📍 ඔබේ ලිපිනය:");
+  if (!address || !address.trim()) return;
+
+  let total = 0;
+  const items = cart.map(item => {
+    const subtotal = item.price * item.qty;
+    total += subtotal;
+    return {
+      name: item.name,
+      price: item.price,
+      qty: item.qty,
+      subtotal: subtotal
+    };
+  });
+
+  const orderData = {
+    action: 'newOrder',
+    customerName: name.trim(),
+    customerPhone: phone.trim(),
+    customerAddress: address.trim(),
+    items: items,
+    total: total
+  };
+
+  try {
+    showToast("⏳ Order යවනවා...");
+    
+    const response = await fetch(SHEET_API_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderData)
+    });
+
+    // Google Apps Script no-cors නිසා response එක කියවන්න බැහැ
+    // ඒත් request එක යනවා
+    showToast("✅ Order එක සාර්ථකව ලැබුණා!");
+    
+    setTimeout(() => {
+      cart = [];
+      renderCart();
+      closeCart();
+      alert(
+        `✅ ඔබේ Order එක සාර්ථකව ලැබුණා!\n\n` +
+        `👤 නම: ${name}\n` +
+        `📞 දුරකථන: ${phone}\n` +
+        `💰 මුළු මුදල: Rs. ${total.toLocaleString()}\n\n` +
+        `අපි ඉක්මනින් ඔබව සම්බන්ධ කරගන්නම්. ස්තූතියි! 🙏`
+      );
+    }, 500);
+
+  } catch (error) {
+    console.error("Order error:", error);
+    showToast("❌ Order යවන්න බැරි වුණා. නැවත try කරන්න.");
+  }
+}
+async function orderSingle(productName, price) {
+  const name = prompt(`"${productName}" order කරන්න\n\n👤 ඔබේ නම:`);
+  if (!name || !name.trim()) return;
+
+  const phone = prompt("📞 ඔබේ දුරකථන අංකය:");
+  if (!phone || !phone.trim()) return;
+
+  const address = prompt("📍 ඔබේ ලිපිනය:");
+  if (!address || !address.trim()) return;
+
+  const orderData = {
+    action: 'newOrder',
+    customerName: name.trim(),
+    customerPhone: phone.trim(),
+    customerAddress: address.trim(),
+    items: [{
+      name: productName,
+      price: price,
+      qty: 1,
+      subtotal: price
+    }],
+    total: price
+  };
+
+  try {
+    showToast("⏳ Order යවනවා...");
+    await fetch(SHEET_API_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderData)
+    });
+    
+    showToast("✅ Order එක ලැබුණා!");
+    setTimeout(() => {
+      alert(
+        `✅ Order එක සාර්ථකව ලැබුණා!\n\n` +
+        `📦 ${productName}\n` +
+        `💰 Rs. ${price.toLocaleString()}\n\n` +
+        `අපි ඉක්මනින් සම්බන්ධ කරගන්නම්! 🙏`
+      );
+    }, 500);
+    
+  } catch (err) {
+    console.error(err);
+    showToast("❌ Order යවන්න බැරි වුණා.");
+  }
+}

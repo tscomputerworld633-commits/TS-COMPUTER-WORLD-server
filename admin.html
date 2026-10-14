@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel - TS COMPUTER WORLD</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Arial, sans-serif; }
+  body { background:#0a0a0a; color:#fff; padding:15px; }
+  
+  /* LOGIN */
+  .login-box {
+    max-width:400px; margin:80px auto; padding:40px 30px;
+    background:#111; border:2px solid #007bff; border-radius:15px;
+    text-align:center;
+  }
+  .login-box h2 { color:#007bff; margin-bottom:25px; font-size:1.5rem; }
+  .login-box input {
+    width:100%; padding:14px; background:#000; border:2px solid #333;
+    color:#fff; border-radius:8px; font-size:1rem; margin-bottom:15px;
+    outline:none; text-align:center; letter-spacing:2px;
+  }
+  .login-box input:focus { border-color:#007bff; }
+  .login-box button {
+    width:100%; padding:14px; background:#007bff; color:#fff;
+    border:none; border-radius:8px; font-weight:700; font-size:1rem;
+    cursor:pointer; transition:0.3s;
+  }
+  .login-box button:hover { background:#0056b3; box-shadow:0 0 15px #007bff; }
+  .login-error { color:#ff3b3b; font-size:0.9rem; margin-top:10px; min-height:22px; }
+
+  /* HEADER */
+  .header {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:18px 20px; background:#000; border:2px solid #007bff;
+    border-radius:10px; margin-bottom:20px; flex-wrap:wrap; gap:12px;
+  }
+  .header h1 { color:#007bff; font-size:1.3rem; }
+  .header h1 span { color:#fff; }
+  .header-actions { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .btn {
+    background:#007bff; color:#fff; border:none; padding:10px 18px;
+    border-radius:25px; font-weight:700; cursor:pointer; transition:0.3s;
+    font-size:0.85rem;
+  }
+  .btn:hover { background:#0056b3; box-shadow:0 0 15px #007bff; }
+  .btn-danger { background:#ff3b3b; }
+  .btn-danger:hover { background:#c41e1e; box-shadow:0 0 15px #ff3b3b; }
+  .live-badge {
+    color:#25D366; font-weight:700; font-size:0.85rem;
+    display:flex; align-items:center; gap:5px;
+  }
+  .live-badge::before {
+    content:''; width:8px; height:8px; border-radius:50%;
+    background:#25D366; box-shadow:0 0 8px #25D366;
+    animation:pulse 1.5s infinite;
+  }
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+  /* STATS */
+  .stats {
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(160px, 1fr));
+    gap:12px; margin-bottom:20px;
+  }
+  .stat-card {
+    background:#111; border:2px solid #007bff; border-radius:10px;
+    padding:18px; text-align:center;
+  }
+  .stat-card .num { font-size:1.8rem; font-weight:800; color:#007bff; }
+  .stat-card .label { font-size:0.75rem; color:#888; margin-top:5px; text-transform:uppercase; letter-spacing:1px; }
+
+  /* FILTERS */
+  .filters { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+  .filter-btn {
+    background:transparent; border:2px solid #007bff; color:#007bff;
+    padding:8px 16px; border-radius:25px; font-weight:600;
+    cursor:pointer; transition:0.3s; font-size:0.85rem;
+  }
+  .filter-btn.active, .filter-btn:hover { background:#007bff; color:#fff; }
+
+  /* SEARCH */
+  .search-box {
+    width:100%; padding:12px 18px; background:#111; border:2px solid #333;
+    color:#fff; border-radius:25px; font-size:0.9rem; margin-bottom:15px;
+    outline:none;
+  }
+  .search-box:focus { border-color:#007bff; }
+
+  /* ORDER CARD */
+  .orders-container { display:grid; gap:15px; }
+  .order-card {
+    background:#111; border:2px solid #007bff; border-radius:10px;
+    overflow:hidden; transition:0.3s;
+  }
+  .order-card:hover { box-shadow:0 0 20px rgba(0,123,255,0.4); }
+  .order-header {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:14px 18px; background:#000; border-bottom:1px solid #222;
+    flex-wrap:wrap; gap:10px;
+  }
+  .order-id { color:#007bff; font-weight:800; font-size:1.05rem; }
+  .order-date { color:#888; font-size:0.8rem; margin-top:3px; }
+  .status-badge {
+    padding:5px 14px; border-radius:20px; font-size:0.75rem;
+    font-weight:700; text-transform:uppercase; letter-spacing:0.5px;
+  }
+  .status-pending { background:#ffa500; color:#000; }
+  .status-confirmed { background:#007bff; color:#fff; }
+  .status-delivered { background:#25D366; color:#fff; }
+  .status-cancelled { background:#ff3b3b; color:#fff; }
+
+  .order-body { padding:18px; }
+  .customer-info {
+    display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
+    gap:15px; padding-bottom:15px; border-bottom:1px solid #222; margin-bottom:15px;
+  }
+  .info-item label {
+    color:#888; font-size:0.7rem; text-transform:uppercase;
+    display:block; margin-bottom:4px; letter-spacing:0.5px;
+  }
+  .info-item .value {
+    color:#fff; font-weight:600; font-size:0.92rem;
+    word-break:break-word; line-height:1.4;
+  }
+  .items-list { margin-bottom:12px; }
+  .items-list h3 {
+    color:#007bff; font-size:0.85rem; margin-bottom:10px;
+    text-transform:uppercase; letter-spacing:1px;
+  }
+  .order-item {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:8px 12px; background:#0a0a0a; border-radius:6px;
+    margin-bottom:6px; font-size:0.88rem; gap:10px;
+    white-space:pre-wrap; word-break:break-word;
+  }
+  .order-item-name { flex:1; }
+  .order-total {
+    display:flex; justify-content:space-between; align-items:center;
+    padding:12px 15px; background:#000; border:1px solid #007bff;
+    border-radius:8px; margin-top:12px; font-weight:700;
+  }
+  .order-total-label { color:#888; letter-spacing:1px; font-size:0.85rem; }
+  .order-total-amount { color:#007bff; font-size:1.25rem; }
+
+  .order-actions {
+    display:flex; gap:8px; padding:14px 18px; background:#0a0a0a;
+    border-top:1px solid #222; flex-wrap:wrap;
+  }
+  .action-btn {
+    padding:9px 16px; border-radius:20px; font-weight:700;
+    cursor:pointer; transition:0.3s; font-size:0.82rem; border:2px solid;
+    flex:1; min-width:110px; text-align:center; text-decoration:none;
+    display:inline-flex; align-items:center; justify-content:center;
+    gap:5px; font-family:inherit;
+  }
+  .btn-confirm { background:transparent; border-color:#007bff; color:#007bff; }
+  .btn-confirm:hover { background:#007bff; color:#fff; }
+  .btn-deliver { background:transparent; border-color:#25D366; color:#25D366; }
+  .btn-deliver:hover { background:#25D366; color:#fff; }
+  .btn-cancel { background:transparent; border-color:#ff3b3b; color:#ff3b3b; }
+  .btn-cancel:hover { background:#ff3b3b; color:#fff; }
+  .btn-whatsapp { background:transparent; border-color:#25D366; color:#25D366; }
+  .btn-whatsapp:hover { background:#25D366; color:#fff; }
+  .btn-delete { background:transparent; border-color:#666; color:#888; }
+  .btn-delete:hover { background:#666; color:#fff; }
+
+  .empty-state {
+    text-align:center; padding:60px 20px; color:#666;
+    border:2px dashed #333; border-radius:10px;
+  }
+  .empty-state h2 { color:#007bff; margin-bottom:10px; font-size:1.3rem; }
+  .loading { text-align:center; padding:40px; color:#007bff; font-weight:700; }
+
+  @media (max-width:600px) {
+    body { padding:10px; }
+    .header { padding:14px; }
+    .header h1 { font-size:1rem; }
+    .order-body { padding:14px; }
+    .order-actions { padding:12px; }
+    .action-btn { min-width:100%; font-size:0.78rem; }
+    .stat-card .num { font-size:1.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <h2>🔐 ADMIN LOGIN</h2>
+    <input type="password" id="passwordInput" placeholder="PASSWORD" 
+           onkeypress="if(event.key==='Enter') doLogin()">
+    <button onclick="doLogin()">LOGIN</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- ADMIN PANEL -->
+<div id="adminPanel" style="display:none;">
+  <div class="header">
+    <h1>TS <span>COMPUTER WORLD</span> — ADMIN</h1>
+    <div class="header-actions">
+      <span class="live-badge">LIVE</span>
+      <button class="btn" onclick="loadOrders()">🔄 Refresh</button>
+      <button class="btn btn-danger" onclick="doLogout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat-card"><div class="num" id="statTotal">0</div><div class="label">Total Orders</div></div>
+    <div class="stat-card"><div class="num" id="statPending">0</div><div class="label">Pending</div></div>
+    <div class="stat-card"><div class="num" id="statConfirmed">0</div><div class="label">Confirmed</div></div>
+    <div class="stat-card"><div class="num" id="statDelivered">0</div><div class="label">Delivered</div></div>
+    <div class="stat-card"><div class="num" id="statRevenue">Rs.0</div><div class="label">Revenue</div></div>
+  </div>
+
+  <input type="text" class="search-box" id="searchBox" 
+         placeholder="🔍 Search by Order ID, Name, or Phone..." 
+         oninput="renderOrders()">
+
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all" onclick="setFilter('all')">All</button>
+    <button class="filter-btn" data-filter="pending" onclick="setFilter('pending')">Pending</button>
+    <button class="filter-btn" data-filter="confirmed" onclick="setFilter('confirmed')">Confirmed</button>
+    <button class="filter-btn" data-filter="delivered" onclick="setFilter('delivered')">Delivered</button>
+    <button class="filter-btn" data-filter="cancelled" onclick="setFilter('cancelled')">Cancelled</button>
+  </div>
+
+  <div class="orders-container" id="ordersContainer">
+    <div class="loading">⏳ Loading orders...</div>
+  </div>
+</div>
+
+<script>
+// ============================================
+// SETTINGS - මේවා වෙනස් කරන්න
+// ============================================
+
+// ⬇️ ඔබේ Google Apps Script URL එක මෙතන paste කරන්න
+const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbx.../exec";
+
+// ⬇️ Admin password එක මෙතන වෙනස් කරන්න
+const ADMIN_PASSWORD = "tsadmin2025";
+
+// ============================================
+// STATE
+// ============================================
+let allOrders = [];
+let currentFilter = 'all';
+
+// ============================================
+// LOGIN
+// ============================================
+function doLogin() {
+  const pass = document.getElementById('passwordInput').value;
+  if (pass === ADMIN_PASSWORD) {
+    sessionStorage.setItem('tsAdminAuth', 'yes');
+    showAdminPanel();
+  } else {
+    document.getElementById('loginError').textContent = "❌ වැරදි password එකක්!";
+    document.getElementById('passwordInput').value = '';
+  }
+}
+
+function doLogout() {
+  if (!confirm("Logout වෙන්නද?")) return;
+  sessionStorage.removeItem('tsAdminAuth');
+  location.reload();
+}
+
+function showAdminPanel() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('adminPanel').style.display = 'block';
+  loadOrders();
+  // Auto-refresh every 30 seconds
+  setInterval(loadOrders, 30000);
+}
+
+// ============================================
+// LOAD ORDERS
+// ============================================
+async function loadOrders() {
+  const container = document.getElementById('ordersContainer');
+  if (!container) return;
+  
+  try {
+    const res = await fetch(SHEET_API_URL, { method: 'GET' });
+    const data = await res.json();
+    
+    if (data.success) {
+      // Newest first
+      allOrders = data.orders.reverse().filter(o => o.orderId);
+      renderOrders();
+    } else {
+      container.innerHTML = `<div class="empty-state"><h2>❌ Error</h2><p>${data.error}</p></div>`;
+    }
+  } catch (err) {
+    console.error(err);
+    container.innerHTML = `<div class="empty-state"><h2>❌ Network Error</h2><p>${err.message}</p></div>`;
+  }
+}
+
+// ============================================
+// FILTER
+// ============================================
+function setFilter(filter) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.filter === filter);
+  });
+  renderOrders();
+}
+
+// ============================================
+// RENDER
+// ============================================
+function renderOrders() {
+  const container = document.getElementById('ordersContainer');
+  const searchTerm = (document.getElementById('searchBox').value || '').toLowerCase().trim();
+  
+  // Stats (all orders, not filtered)
+  const total = allOrders.length;
+  const pending = allOrders.filter(o => o.status === 'pending').length;
+  const confirmed = allOrders.filter(o => o.status === 'confirmed').length;
+  const delivered = allOrders.filter(o => o.status === 'delivered').length;
+  const revenue = allOrders
+    .filter(o => o.status !== 'cancelled')
+    .reduce((sum, o) => sum + (Number(o.total) || 0), 0);
+  
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statPending').textContent = pending;
+  document.getElementById('statConfirmed').textContent = confirmed;
+  document.getElementById('statDelivered').textContent = delivered;
+  document.getElementById('statRevenue').textContent = 'Rs.' + revenue.toLocaleString();
+  
+  // Filter
+  let orders = allOrders;
+  if (currentFilter !== 'all') {
+    orders = orders.filter(o => o.status === currentFilter);
+  }
+  
+  // Search
+  if (searchTerm) {
+    orders = orders.filter(o => 
+      (o.orderId || '').toLowerCase().includes(searchTerm) ||
+      (o.customerName || '').toLowerCase().includes(searchTerm) ||
+      (o.customerPhone || '').toLowerCase().includes(searchTerm)
+    );
+  }
+  
+  if (orders.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <h2>📭 Orders නැහැ</h2>
+        <p>${searchTerm ? `"${searchTerm}" සඳහා orders නැහැ.` : 
+            currentFilter === 'all' ? 'තවම order එකක් ලැබිලා නැහැ.' : 
+            `"${currentFilter}" orders නැහැ.`}</p>
+      </div>`;
+    return;
+  }
+  
+  let html = '';
+  orders.forEach(order => {
+    const orderId = order.orderId || 'N/A';
+    const status = (order.status || 'pending').toLowerCase();
+    const customerName = order.customerName || 'N/A';
+    const customerPhone = order.customerPhone || 'N/A';
+    const customerAddress = order.customerAddress || 'N/A';
+    const items = order.items || '';
+    const total = Number(order.total) || 0;
+    const date = order.date || 'N/A';
+    
+    // Items display
+    const itemsHtml = items.split('\n').filter(i => i.trim()).map(line => 
+      `<div class="order-item"><span class="order-item-name">${line}</span></div>`
+    ).join('');
+    
+    // WhatsApp link
+    const cleanPhone = customerPhone.replace(/\D/g, '');
+    const waMessage = encodeURIComponent(
+      `ආයුබෝවන් ${customerName}! 🙏\n\n` +
+      `ඔබේ Order ${orderId} එක ගැන සම්බන්ධ වෙනවා.\n` +
+      `💰 මුළු මුදල: Rs. ${total.toLocaleString()}`
+    );
+    const waLink = `https://wa.me/${cleanPhone}?text=${waMessage}`;
+    
+    html += `
+      <div class="order-card">
+        <div class="order-header">
+          <div>
+            <div class="order-id">📋 ${orderId}</div>
+            <div class="order-date">${date}</div>
+          </div>
+          <span class="status-badge status-${status}">${status}</span>
+        </div>
+        <div class="order-body">
+          <div class="customer-info">
+            <div class="info-item">
+              <label>👤 Customer</label>
+              <div class="value">${customerName}</div>
+            </div>
+            <div class="info-item">
+              <label>📞 Phone</label>
+              <div class="value">${customerPhone}</div>
+            </div>
+            <div class="info-item">
+              <label>📍 Address</label>
+              <div class="value">${customerAddress}</div>
+            </div>
+          </div>
+          <div class="items-list">
+            <h3>📦 Items</h3>
+            ${itemsHtml}
+          </div>
+          <div class="order-total">
+            <span class="order-total-label">TOTAL</span>
+            <span class="order-total-amount">Rs. ${total.toLocaleString()}</span>
+          </div>
+        </div>
+        <div class="order-actions">
+          ${status === 'pending' ? 
+            `<button class="action-btn btn-confirm" onclick="updateStatus('${orderId}', 'confirmed')">✓ Confirm</button>` : ''}
+          ${status === 'confirmed' ? 
+            `<button class="action-btn btn-deliver" onclick="updateStatus('${orderId}', 'delivered')">🚚 Delivered</button>` : ''}
+          ${status !== 'cancelled' && status !== 'delivered' ? 
+            `<button class="action-btn btn-cancel" onclick="updateStatus('${orderId}', 'cancelled')">✕ Cancel</button>` : ''}
+          <a class="action-btn btn-whatsapp" href="${waLink}" target="_blank">📱 WhatsApp</a>
+          <button class="action-btn btn-delete" onclick="deleteOrder('${orderId}')">🗑 Delete</button>
+        </div>
+      </div>`;
+  });
+  container.innerHTML = html;
+}
+
+// ============================================
+// UPDATE STATUS
+// ============================================
+async function updateStatus(orderId, status) {
+  if (!confirm(`${orderId} එකේ status එක "${status}" කරන්නද?`)) return;
+  
+  try {
+    await fetch(SHEET_API_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'updateStatus',
+        orderId: orderId,
+        status: status
+      })
+    });
+    
+    // Local update
+    const order = allOrders.find(o => o.orderId === orderId);
+    if (order) order.status = status;
+    renderOrders();
+    
+  } catch (err) {
+    alert("Status update කරන්න බැරි වුණා: " + err.message);
+  }
+}
+
+// ============================================
+// DELETE ORDER
+// ============================================
+async function deleteOrder(orderId) {
+  if (!confirm(`${orderId} order එක මකන්නද? මේක undo කරන්න බැහැ!`)) return;
+  
+  try {
+    await fetch(SHEET_API_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'deleteOrder',
+        orderId: orderId
+      })
+    });
+    
+    // Local update
+    allOrders = allOrders.filter(o => o.orderId !== orderId);
+    renderOrders();
+    
+  } catch (err) {
+    alert("Delete කරන්න බැරි වුණා: " + err.message);
+  }
+}
+
+// ============================================
+// INIT
+// ============================================
+if (sessionStorage.getItem('tsAdminAuth') === 'yes') {
+  showAdminPanel();
+}
+</script>
+
+</body>
+</html>
